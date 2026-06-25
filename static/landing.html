@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AbojutoAI — Protecting Nigeria, One Camera at a Time</title>
+  <title>AbojutoAI — For Ahoro-Esinele, For Oriire, For Nigeria</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --ng-green:   #008751;
       --ng-green2:  #00a862;
-      --ng-white:   #ffffff;
+      --ng-green3:  #004d2e;
       --bg:         #050d07;
       --surface:    #0a1a0d;
       --surface2:   #0f2414;
@@ -18,6 +18,7 @@
       --text:       #d4edd9;
       --muted:      #5a8a65;
       --danger:     #ff4444;
+      --warning:    #ffb800;
       --font:       'Segoe UI', system-ui, sans-serif;
     }
 
@@ -40,8 +41,8 @@
       justify-content: space-between;
       padding: 0 40px;
       height: 68px;
-      background: rgba(5,13,7,0.92);
-      backdrop-filter: blur(12px);
+      background: rgba(5,13,7,0.94);
+      backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--border);
     }
 
@@ -51,36 +52,30 @@
       gap: 12px;
     }
 
-    /* SVG Shield Logo */
-    .logo-svg {
-      width: 40px;
-      height: 40px;
-      flex-shrink: 0;
-    }
-
     .nav-brand {
       font-size: 22px;
       font-weight: 800;
       letter-spacing: 0.3px;
-      color: var(--ng-white);
+      color: #fff;
     }
     .nav-brand span { color: var(--ng-green2); }
 
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      flex-wrap: wrap;
     }
     .nav-link {
       color: var(--muted);
       text-decoration: none;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
-      padding: 7px 14px;
+      padding: 7px 13px;
       border-radius: 8px;
       transition: color 0.2s, background 0.2s;
     }
-    .nav-link:hover { color: var(--ng-white); background: var(--surface2); }
+    .nav-link:hover { color: #fff; background: var(--surface2); }
 
     .btn {
       display: inline-flex;
@@ -94,6 +89,7 @@
       text-decoration: none;
       border: none;
       transition: all 0.2s;
+      font-family: var(--font);
     }
     .btn-primary {
       background: var(--ng-green);
@@ -107,7 +103,7 @@
     }
     .btn-outline {
       background: transparent;
-      color: var(--ng-white);
+      color: #fff;
       border: 1px solid var(--border);
     }
     .btn-outline:hover { border-color: var(--ng-green); color: var(--ng-green2); }
@@ -125,23 +121,21 @@
       overflow: hidden;
     }
 
-    /* Nigerian flag stripe accents */
     .hero::before, .hero::after {
       content: '';
       position: absolute;
       top: 0; bottom: 0;
-      width: 6px;
+      width: 5px;
     }
     .hero::before { left: 0; background: var(--ng-green); }
     .hero::after  { right: 0; background: var(--ng-green); }
 
-    /* Background radial glow */
     .hero-glow {
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 60% 50% at 50% 40%, rgba(0,135,81,0.12) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 30% at 20% 70%, rgba(0,135,81,0.06) 0%, transparent 60%);
+        radial-gradient(ellipse 65% 55% at 50% 40%, rgba(0,135,81,0.13) 0%, transparent 70%),
+        radial-gradient(ellipse 35% 25% at 15% 80%, rgba(0,135,81,0.07) 0%, transparent 60%);
       pointer-events: none;
     }
 
@@ -155,51 +149,70 @@
       padding: 6px 16px;
       font-size: 12px;
       font-weight: 700;
-      letter-spacing: 1.5px;
+      letter-spacing: 1.2px;
       text-transform: uppercase;
       color: var(--ng-green2);
       margin-bottom: 28px;
     }
     .eyebrow-dot {
       width: 6px; height: 6px;
-      background: var(--ng-green2);
+      background: var(--danger);
       border-radius: 50%;
-      animation: pulse 2s infinite;
+      animation: blink 1.2s infinite;
     }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
 
+    /* Nigerian flag SVG inline */
     .hero-flag {
-      width: 80px;
-      height: auto;
-      margin-bottom: 24px;
+      display: flex;
+      gap: 3px;
+      margin-bottom: 28px;
+      justify-content: center;
     }
+    .flag-strip {
+      width: 14px; height: 42px;
+      border-radius: 3px;
+    }
+    .flag-strip.g { background: var(--ng-green); }
+    .flag-strip.w { background: rgba(255,255,255,0.85); }
 
     .hero h1 {
-      font-size: clamp(36px, 6vw, 72px);
+      font-size: clamp(34px, 5.5vw, 68px);
       font-weight: 900;
       line-height: 1.1;
       letter-spacing: -1.5px;
-      color: var(--ng-white);
+      color: #fff;
       margin-bottom: 20px;
     }
-    .hero h1 .highlight {
-      color: var(--ng-green2);
-      position: relative;
+    .hero h1 .green { color: var(--ng-green2); }
+    .hero h1 .red   { color: var(--danger); }
+
+    .hero-location {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255,68,68,0.08);
+      border: 1px solid rgba(255,68,68,0.25);
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #ff7070;
+      margin-bottom: 20px;
     }
 
     .hero-sub {
-      font-size: clamp(16px, 2.5vw, 20px);
+      font-size: clamp(15px, 2.2vw, 19px);
       color: var(--muted);
-      max-width: 640px;
-      margin: 0 auto 12px;
+      max-width: 620px;
+      margin: 0 auto 14px;
     }
-    .hero-tagline {
-      font-size: 14px;
-      color: var(--ng-green2);
+    .hero-date {
+      font-size: 13px;
+      color: var(--warning);
       font-weight: 600;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
       margin-bottom: 40px;
-      font-style: italic;
     }
 
     .hero-cta {
@@ -210,24 +223,47 @@
       margin-bottom: 60px;
     }
 
-    /* Scroll indicator */
     .scroll-hint {
       position: absolute;
-      bottom: 30px;
+      bottom: 28px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       color: var(--muted);
       font-size: 11px;
       letter-spacing: 1px;
       text-transform: uppercase;
-      animation: bounce 2s infinite;
+      animation: bob 2.2s infinite;
     }
-    @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
-    .scroll-arrow { font-size: 18px; }
+    @keyframes bob { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(7px)} }
+
+    /* ── URGENT BAND ─────────────────────────────────────────────── */
+    .urgent-band {
+      background: linear-gradient(90deg, #7a0000, var(--danger), #7a0000);
+      padding: 14px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      text-align: center;
+      flex-wrap: wrap;
+    }
+    .urgent-band p {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.3px;
+    }
+    .ticker-dot {
+      width: 8px; height: 8px;
+      background: #fff;
+      border-radius: 50%;
+      animation: blink 0.8s infinite;
+      flex-shrink: 0;
+    }
 
     /* ── STAT BAND ───────────────────────────────────────────────── */
     .stat-band {
@@ -235,34 +271,27 @@
       padding: 28px 40px;
       display: flex;
       justify-content: center;
-      gap: 60px;
+      gap: 48px;
       flex-wrap: wrap;
     }
-    .stat-item {
-      text-align: center;
-      color: #fff;
-    }
+    .stat-item { text-align: center; color: #fff; }
     .stat-item .num {
-      font-size: 36px;
+      font-size: 38px;
       font-weight: 900;
       line-height: 1;
       display: block;
     }
     .stat-item .lbl {
-      font-size: 12px;
-      opacity: 0.8;
+      font-size: 11px;
+      opacity: 0.85;
       text-transform: uppercase;
       letter-spacing: 0.8px;
-      margin-top: 4px;
+      margin-top: 5px;
     }
 
     /* ── SECTIONS ────────────────────────────────────────────────── */
     section { padding: 80px 24px; }
-
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
+    .container { max-width: 1100px; margin: 0 auto; }
 
     .section-tag {
       display: inline-block;
@@ -276,125 +305,321 @@
       margin-bottom: 16px;
     }
     .section-title {
-      font-size: clamp(28px, 4vw, 42px);
+      font-size: clamp(26px, 3.8vw, 40px);
       font-weight: 800;
-      color: var(--ng-white);
+      color: #fff;
       line-height: 1.2;
       margin-bottom: 16px;
     }
     .section-sub {
-      font-size: 17px;
+      font-size: 16px;
       color: var(--muted);
-      max-width: 600px;
+      max-width: 580px;
       margin-bottom: 40px;
     }
 
-    /* ── CRISIS SECTION ──────────────────────────────────────────── */
-    .crisis-section {
+    /* ── INCIDENT SECTION ────────────────────────────────────────── */
+    .incident-section {
       background: var(--surface);
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
     }
-
-    .crisis-grid {
+    .incident-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 48px;
-      align-items: center;
+      align-items: start;
     }
-    @media (max-width: 768px) { .crisis-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { .incident-grid { grid-template-columns: 1fr; } }
 
-    .crisis-text p { color: var(--muted); margin-bottom: 16px; font-size: 16px; }
-    .crisis-text strong { color: var(--ng-white); }
+    .incident-text p { color: var(--muted); margin-bottom: 14px; font-size: 15px; }
+    .incident-text strong { color: #fff; }
 
-    .crisis-visual {
-      position: relative;
-    }
-    .flag-card {
-      background: var(--surface2);
+    /* Photo card — styled like a news card */
+    .photo-card {
+      border-radius: 14px;
+      overflow: hidden;
       border: 1px solid var(--border);
-      border-radius: 16px;
+      background: var(--surface2);
+    }
+    .photo-card-img {
+      width: 100%;
+      aspect-ratio: 16/10;
+      background: linear-gradient(160deg, #0a2010 0%, #051508 100%);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       overflow: hidden;
     }
-    .flag-stripe-top {
-      height: 8px;
-      background: linear-gradient(90deg, var(--ng-green) 33%, #fff 33%, #fff 66%, var(--ng-green) 66%);
+    /* Satellite-map-style illustration of the area */
+    .photo-card-img svg { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+    .photo-card-label {
+      position: absolute;
+      bottom: 10px; left: 12px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ng-green2);
+      letter-spacing: 0.5px;
     }
-    .flag-stripe-bottom {
-      height: 8px;
-      background: linear-gradient(90deg, var(--ng-green) 33%, #fff 33%, #fff 66%, var(--ng-green) 66%);
-    }
-    .flag-content {
-      padding: 32px;
-      text-align: center;
-    }
-    .flag-content .big-icon { font-size: 64px; margin-bottom: 16px; }
-    .flag-content h3 {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--ng-white);
-      margin-bottom: 8px;
-    }
-    .flag-content p { color: var(--muted); font-size: 14px; }
+    .photo-card-body { padding: 18px 20px; }
+    .photo-card-body h3 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .photo-card-body p { font-size: 13px; color: var(--muted); }
 
-    .quote-card {
-      background: linear-gradient(135deg, rgba(0,135,81,0.1), rgba(0,135,81,0.05));
-      border: 1px solid rgba(0,135,81,0.25);
-      border-left: 4px solid var(--ng-green);
-      border-radius: 12px;
-      padding: 20px 24px;
-      margin-top: 24px;
-      font-style: italic;
-      color: var(--ng-white);
-      font-size: 15px;
+    /* ── VICTIM CARDS ────────────────────────────────────────────── */
+    .victims-section { background: #050d07; }
+
+    .victims-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
     }
-    .quote-card cite {
+    .victim-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 20px;
+      position: relative;
+      transition: border-color 0.3s;
+    }
+    .victim-card:hover { border-color: var(--ng-green); }
+    .victim-card.hero-card { border-color: rgba(255,68,68,0.35); }
+    .victim-avatar {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 14px;
+    }
+    .victim-photo {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: top center;
+      border: 2px solid rgba(255,68,68,0.4);
+      margin-bottom: 14px;
       display: block;
-      font-style: normal;
+    }
+
+    /* Real photo gallery */
+    .event-photos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    @media (max-width: 600px) { .event-photos { grid-template-columns: 1fr; } }
+    .event-photo-card {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+    }
+    .event-photo-card img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+      max-height: 280px;
+    }
+    .event-photo-card .caption {
+      padding: 10px 14px;
       font-size: 12px;
       color: var(--muted);
-      margin-top: 8px;
+      line-height: 1.5;
+    }
+    .event-photo-card .caption strong { color: #fff; }
+    .victim-card .avatar-teacher { background: rgba(255,68,68,0.12); border: 1.5px solid rgba(255,68,68,0.3); }
+    .victim-card .avatar-child   { background: rgba(0,135,81,0.12);  border: 1.5px solid rgba(0,135,81,0.3); }
+    .victim-card .avatar-principal { background: rgba(255,184,0,0.1); border: 1.5px solid rgba(255,184,0,0.3); }
+    .victim-name { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .victim-role { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+    .victim-role.teacher   { color: #ff7070; }
+    .victim-role.child     { color: var(--ng-green2); }
+    .victim-role.principal { color: var(--warning); }
+    .victim-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .rip-badge {
+      position: absolute;
+      top: 16px; right: 16px;
+      background: rgba(255,68,68,0.12);
+      border: 1px solid rgba(255,68,68,0.3);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #ff7070;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── ATTACK TIMELINE ─────────────────────────────────────────── */
+    .timeline-section {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+      max-width: 720px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 8px; bottom: 8px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--ng-green), var(--border));
+    }
+    .tl-item {
+      position: relative;
+      padding: 0 0 32px 28px;
+    }
+    .tl-item:last-child { padding-bottom: 0; }
+    .tl-dot {
+      position: absolute;
+      left: -22px;
+      top: 5px;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--ng-green);
+      background: var(--bg);
+      flex-shrink: 0;
+    }
+    .tl-dot.red { border-color: var(--danger); background: rgba(255,68,68,0.15); }
+    .tl-time {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--ng-green2);
+      margin-bottom: 5px;
+    }
+    .tl-time.red { color: var(--danger); }
+    .tl-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .tl-body  { font-size: 14px; color: var(--muted); line-height: 1.55; }
+
+    /* ── LOCATION CARD ───────────────────────────────────────────── */
+    .location-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 40px;
+    }
+    @media (max-width: 768px) { .location-grid { grid-template-columns: 1fr; } }
+
+    .loc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+    }
+    .loc-card h3 { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .loc-fact { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+    .loc-fact:last-child { border-bottom: none; }
+    .loc-fact .k { color: var(--muted); }
+    .loc-fact .v { color: #fff; font-weight: 600; text-align: right; }
+
+    /* Map-style illustration */
+    .map-card {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #0a1a0d;
+      aspect-ratio: 4/3;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .map-label {
+      position: absolute;
+      top: 12px; left: 14px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ng-green2);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: rgba(0,0,0,0.6);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .map-pin {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+    .map-pin-head {
+      width: 22px; height: 22px;
+      background: var(--danger);
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px rgba(255,68,68,0.6);
+    }
+    .map-pin-shadow {
+      width: 8px; height: 4px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 50%;
+      margin-top: 2px;
+    }
+    .map-pulse {
+      position: absolute;
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,68,68,0.5);
+      animation: expand 2s ease-out infinite;
+    }
+    .map-pulse2 {
+      position: absolute;
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,68,68,0.25);
+      animation: expand 2s ease-out infinite 0.6s;
+    }
+    @keyframes expand { from{opacity:1;transform:scale(0.6)} to{opacity:0;transform:scale(1.4)} }
+    .map-name {
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      background: rgba(0,0,0,0.75);
+      border: 1px solid rgba(255,68,68,0.4);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #ff9090;
     }
 
     /* ── HOW IT WORKS ────────────────────────────────────────────── */
     .steps {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 20px;
     }
     .step-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 28px 24px;
-      position: relative;
+      padding: 26px 22px;
       transition: border-color 0.3s, transform 0.3s;
     }
     .step-card:hover { border-color: var(--ng-green); transform: translateY(-4px); }
-    .step-num {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      color: var(--ng-green2);
-      margin-bottom: 16px;
-    }
-    .step-icon { font-size: 32px; margin-bottom: 12px; }
-    .step-card h3 { font-size: 17px; color: var(--ng-white); margin-bottom: 8px; font-weight: 700; }
-    .step-card p { font-size: 14px; color: var(--muted); }
-    .step-arrow {
-      display: none;
-    }
-    @media (min-width: 900px) {
-      .step-arrow {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--muted);
-        font-size: 24px;
-        margin-top: 48px;
-        flex-shrink: 0;
-      }
-    }
+    .step-num { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--ng-green2); margin-bottom: 14px; }
+    .step-icon { font-size: 30px; margin-bottom: 10px; }
+    .step-card h3 { font-size: 16px; color: #fff; margin-bottom: 8px; font-weight: 700; }
+    .step-card p  { font-size: 13px; color: var(--muted); }
 
     /* ── LIVE ALERTS ─────────────────────────────────────────────── */
     .alerts-section {
@@ -414,7 +639,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(255,68,68,0.12);
+      background: rgba(255,68,68,0.1);
       border: 1px solid rgba(255,68,68,0.3);
       border-radius: 100px;
       padding: 5px 14px;
@@ -428,26 +653,15 @@
       border-radius: 50%;
       animation: blink 1s infinite;
     }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-    .ws-status {
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .ws-status.connected { color: var(--ng-green2); }
-
     .alert-feed {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      max-height: 400px;
+      max-height: 380px;
       overflow-y: auto;
-      padding-right: 4px;
     }
     .alert-feed::-webkit-scrollbar { width: 4px; }
-    .alert-feed::-webkit-scrollbar-track { background: transparent; }
     .alert-feed::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
     .feed-item {
       background: var(--surface2);
       border: 1px solid var(--border);
@@ -460,36 +674,35 @@
     }
     @keyframes fadeSlide { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:none} }
     .feed-item.new-alert { border-color: var(--danger); }
-    .feed-icon {
-      font-size: 24px;
-      flex-shrink: 0;
-    }
+    .feed-icon { font-size: 22px; flex-shrink: 0; }
     .feed-body { flex: 1; min-width: 0; }
-    .feed-title {
-      font-weight: 700;
-      color: var(--ng-white);
-      font-size: 14px;
-      margin-bottom: 3px;
-    }
-    .feed-meta {
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .feed-time {
-      font-size: 11px;
-      color: var(--muted);
-      flex-shrink: 0;
-      font-variant-numeric: tabular-nums;
-    }
+    .feed-title { font-weight: 700; color: #fff; font-size: 14px; margin-bottom: 3px; }
+    .feed-meta  { font-size: 12px; color: var(--muted); }
+    .feed-time  { font-size: 11px; color: var(--muted); flex-shrink: 0; font-variant-numeric: tabular-nums; }
     .feed-empty {
       text-align: center;
       color: var(--muted);
       padding: 48px 0;
       font-size: 14px;
     }
-    .feed-empty .fe { font-size: 36px; margin-bottom: 10px; opacity: 0.4; }
+    .feed-empty .fe { font-size: 36px; margin-bottom: 10px; opacity: 0.35; }
 
-    /* ── CONNECT SECTION ─────────────────────────────────────────── */
+    /* ── NOTIFY ──────────────────────────────────────────────────── */
+    .notify-section { text-align: center; }
+    .notify-card {
+      max-width: 540px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, rgba(0,135,81,0.1), rgba(0,135,81,0.03));
+      border: 1px solid rgba(0,135,81,0.3);
+      border-radius: 20px;
+      padding: 48px 36px;
+    }
+    .notify-icon { font-size: 48px; margin-bottom: 14px; }
+    .notify-card h2 { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 10px; }
+    .notify-card p  { color: var(--muted); margin-bottom: 28px; font-size: 15px; }
+    .notify-result  { margin-top: 16px; font-size: 13px; color: var(--ng-green2); min-height: 20px; }
+
+    /* ── CONNECT ─────────────────────────────────────────────────── */
     .connect-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -497,50 +710,33 @@
       align-items: start;
     }
     @media (max-width: 768px) { .connect-grid { grid-template-columns: 1fr; } }
-
+    .code-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
     .code-block {
       background: #0a1a0d;
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 20px;
       font-family: 'Courier New', monospace;
-      font-size: 13px;
+      font-size: 12.5px;
       color: var(--ng-green2);
       overflow-x: auto;
+      line-height: 1.7;
     }
-    .code-block .comment { color: var(--muted); }
-    .code-block .key { color: #88d4a0; }
-    .code-block .string { color: #b8e0c4; }
-    .code-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
+    .code-block .cm { color: var(--muted); }
+    .code-block .ky { color: #88d4a0; }
+    .code-block .st { color: #b8e0c4; }
     .connect-steps { display: flex; flex-direction: column; gap: 16px; }
-    .connect-step {
-      display: flex;
-      gap: 14px;
-      align-items: flex-start;
-    }
+    .connect-step { display: flex; gap: 14px; align-items: flex-start; }
     .c-step-num {
-      width: 28px;
-      height: 28px;
+      width: 28px; height: 28px;
       background: var(--ng-green);
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 800;
-      color: #fff;
-      flex-shrink: 0;
-      margin-top: 2px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800; color: #fff;
+      flex-shrink: 0; margin-top: 2px;
     }
-    .c-step-body h4 { font-size: 14px; font-weight: 700; color: var(--ng-white); margin-bottom: 4px; }
-    .c-step-body p { font-size: 13px; color: var(--muted); }
+    .c-step-body h4 { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .c-step-body p  { font-size: 13px; color: var(--muted); }
     .c-step-body code {
       background: var(--surface2);
       border: 1px solid var(--border);
@@ -551,69 +747,24 @@
       font-family: monospace;
     }
 
-    /* ── NOTIFY BUTTON ───────────────────────────────────────────── */
-    .notify-section {
-      text-align: center;
-      padding: 60px 24px;
-    }
-    .notify-card {
-      max-width: 560px;
-      margin: 0 auto;
-      background: linear-gradient(135deg, rgba(0,135,81,0.1), rgba(0,135,81,0.03));
-      border: 1px solid rgba(0,135,81,0.3);
-      border-radius: 20px;
-      padding: 48px 40px;
-    }
-    .notify-icon { font-size: 52px; margin-bottom: 16px; }
-    .notify-card h2 {
-      font-size: 26px;
-      font-weight: 800;
-      color: var(--ng-white);
-      margin-bottom: 10px;
-    }
-    .notify-card p { color: var(--muted); margin-bottom: 28px; font-size: 15px; }
-    .notify-result {
-      margin-top: 16px;
-      font-size: 13px;
-      color: var(--ng-green2);
-      min-height: 20px;
-    }
-
     /* ── FOOTER ──────────────────────────────────────────────────── */
     footer {
       background: var(--surface);
       border-top: 1px solid var(--border);
-      padding: 32px 40px;
+      padding: 28px 40px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 16px;
     }
-    .footer-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--ng-white);
-    }
-    .footer-logo span { color: var(--ng-green2); }
-    .footer-tagline {
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .footer-flag {
-      display: flex;
-      gap: 3px;
-      align-items: center;
-    }
-    .flag-block {
-      width: 18px; height: 26px;
-      border-radius: 2px;
-    }
-    .flag-block.green { background: var(--ng-green); }
-    .flag-block.white { background: #fff; }
+    .footer-brand { font-size: 16px; font-weight: 700; color: #fff; }
+    .footer-brand span { color: var(--ng-green2); }
+    .footer-copy { font-size: 12px; color: var(--muted); }
+    .ng-flag-mini { display: flex; gap: 2px; }
+    .nf { width: 12px; height: 20px; border-radius: 2px; }
+    .nf.g { background: var(--ng-green); }
+    .nf.w { background: rgba(255,255,255,0.8); }
   </style>
 </head>
 <body>
@@ -621,31 +772,27 @@
 <!-- ── NAV ────────────────────────────────────────────────────────── -->
 <nav>
   <div class="nav-logo">
-    <svg class="logo-svg" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
       <path d="M20 3L5 9V21C5 29.5 11.5 37.4 20 39C28.5 37.4 35 29.5 35 21V9L20 3Z"
-            fill="#008751" opacity="0.25" stroke="#008751" stroke-width="1.5"/>
-      <!-- Nigerian flag inside shield -->
-      <clipPath id="sh">
-        <path d="M20 5L7 10.5V21C7 28.5 12.8 35.5 20 37C27.2 35.5 33 28.5 33 21V10.5L20 5Z"/>
-      </clipPath>
-      <g clip-path="url(#sh)">
+            fill="#008751" opacity="0.2" stroke="#008751" stroke-width="1.5"/>
+      <clipPath id="n"><path d="M20 5L7 10.5V21C7 28.5 12.8 35.5 20 37C27.2 35.5 33 28.5 33 21V10.5L20 5Z"/></clipPath>
+      <g clip-path="url(#n)">
         <rect x="7" y="5" width="8.7" height="32" fill="#008751"/>
-        <rect x="15.7" y="5" width="8.7" height="32" fill="#ffffff" opacity="0.9"/>
+        <rect x="15.7" y="5" width="8.7" height="32" fill="rgba(255,255,255,0.9)"/>
         <rect x="24.3" y="5" width="8.7" height="32" fill="#008751"/>
       </g>
-      <!-- eye icon in center -->
       <ellipse cx="20" cy="20" rx="5" ry="3.5" fill="white" opacity="0.95"/>
       <circle cx="20" cy="20" r="2" fill="#008751"/>
-      <circle cx="20.6" cy="19.4" r="0.7" fill="white"/>
+      <circle cx="20.6" cy="19.4" r="0.65" fill="white"/>
     </svg>
     <div class="nav-brand">Abojuto<span>AI</span></div>
   </div>
   <div class="nav-links">
-    <a href="#crisis"     class="nav-link">The Crisis</a>
-    <a href="#how"        class="nav-link">How It Works</a>
-    <a href="#alerts"     class="nav-link">Live Alerts</a>
-    <a href="#connect"    class="nav-link">Connect</a>
-    <a href="/dashboard"  class="btn btn-primary" style="font-size:13px;padding:8px 18px;">Dashboard →</a>
+    <a href="#incident"  class="nav-link">The Incident</a>
+    <a href="#victims"   class="nav-link">Victims</a>
+    <a href="#location"  class="nav-link">Oriire</a>
+    <a href="#alerts"    class="nav-link">Live Feed</a>
+    <a href="/dashboard" class="btn btn-primary" style="font-size:13px;padding:8px 18px;">Open Dashboard →</a>
   </div>
 </nav>
 
@@ -653,138 +800,203 @@
 <section class="hero">
   <div class="hero-glow"></div>
 
-  <!-- Nigerian flag SVG -->
-  <svg class="hero-flag" viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
-    <rect width="40" height="80" fill="#008751"/>
-    <rect x="40" width="40" height="80" fill="#ffffff"/>
-    <rect x="80" width="40" height="80" fill="#008751"/>
-    <!-- Subtle shadow -->
-    <rect width="120" height="80" fill="none" stroke="rgba(0,135,81,0.3)" stroke-width="1.5" rx="3"/>
-  </svg>
-
   <div class="hero-eyebrow">
     <span class="eyebrow-dot"></span>
-    AI Surveillance · Made in Nigeria · For Nigeria
+    Lending our voice — Ahoro-Esinele, Oyo State · May 2026
+  </div>
+
+  <!-- Mini Nigerian flag -->
+  <div class="hero-flag">
+    <div class="flag-strip g"></div>
+    <div class="flag-strip w"></div>
+    <div class="flag-strip g"></div>
   </div>
 
   <h1>
-    <span class="highlight">AI Eyes</span> That Never Sleep<br/>for a Nation That Must Stay Safe
+    They Were Taken<br/>
+    <span class="green">From Their Classrooms.</span><br/>
+    <span class="red">We Will Not Forget.</span>
   </h1>
 
+  <div class="hero-location">
+    📍 Ahoro-Esinele &amp; Yawota — Oriire LGA, Oyo State, Nigeria
+  </div>
+
   <p class="hero-sub">
-    AbojutoAI is an intelligent surveillance system that detects human presence, captures evidence,
-    and fires real-time alerts — so you know before it's too late.
+    46 students and teachers were abducted by armed gunmen from community schools
+    in Oriire Local Government Area. AbojutoAI was built so that the next attack
+    cannot go unseen.
   </p>
-  <p class="hero-tagline">🕊️ We lend our voice for every Nigerian who was taken. We will not look away.</p>
+  <p class="hero-date">⚠️ Attack: Friday, 15–16 May 2026 · Ongoing as of June 2026</p>
 
   <div class="hero-cta">
     <button class="btn btn-primary" onclick="requestNotifications()">
-      🔔 Enable Alerts on This Device
+      🔔 Enable Real-Time Alerts
     </button>
-    <a href="/dashboard" class="btn btn-outline">📹 Open Dashboard</a>
-    <a href="#alerts" class="btn btn-outline">🚨 Live Feed</a>
+    <a href="#incident" class="btn btn-outline">Read the Story</a>
+    <a href="/dashboard" class="btn btn-outline">📹 Dashboard</a>
   </div>
 
   <div class="scroll-hint">
-    <span class="scroll-arrow">↓</span>
-    <span>Scroll</span>
+    <span>↓</span><span>Scroll</span>
   </div>
 </section>
 
-<!-- ── STAT BAND ──────────────────────────────────────────────────── -->
+<!-- ── URGENT BAND ─────────────────────────────────────────────────── -->
+<div class="urgent-band">
+  <span class="ticker-dot"></span>
+  <p>46 people — including a 2-year-old child — remain unaccounted for · Teacher Michael Oyedokun killed in captivity · Principal Mrs. Rachael Alamu still missing</p>
+  <span class="ticker-dot"></span>
+</div>
+
+<!-- ── STAT BAND ───────────────────────────────────────────────────── -->
 <div class="stat-band">
   <div class="stat-item">
-    <span class="num">1,470+</span>
-    <span class="lbl">Students Kidnapped since 2014</span>
+    <span class="num">46</span>
+    <span class="lbl">People Abducted</span>
   </div>
   <div class="stat-item">
-    <span class="num">276</span>
-    <span class="lbl">Chibok Girls Abducted</span>
+    <span class="num">39</span>
+    <span class="lbl">Students Taken</span>
   </div>
   <div class="stat-item">
-    <span class="num">36</span>
-    <span class="lbl">States at Risk</span>
+    <span class="num">2 yrs</span>
+    <span class="lbl">Youngest Victim</span>
   </div>
   <div class="stat-item">
-    <span class="num">24/7</span>
-    <span class="lbl">AbojutoAI Watches</span>
+    <span class="num">7</span>
+    <span class="lbl">Teachers Abducted</span>
+  </div>
+  <div class="stat-item">
+    <span class="num">1</span>
+    <span class="lbl">Teacher Killed</span>
   </div>
 </div>
 
-<!-- ── CRISIS ─────────────────────────────────────────────────────── -->
-<section class="crisis-section" id="crisis">
+<!-- ── INCIDENT ────────────────────────────────────────────────────── -->
+<section class="incident-section" id="incident">
   <div class="container">
-    <div class="crisis-grid">
-      <div class="crisis-text">
-        <div class="section-tag">The Crisis</div>
-        <h2 class="section-title">Nigeria's Security Emergency Cannot Wait</h2>
+    <div class="incident-grid">
+      <div class="incident-text">
+        <div class="section-tag">What Happened</div>
+        <h2 class="section-title">The Night Ahoro-Esinele Was Attacked</h2>
+
         <p>
-          Since the <strong>Chibok kidnapping of April 2014</strong>, over 1,470 students have been abducted
-          from Nigerian schools. Bandits, insurgents, and criminal groups continue to strike homes,
-          markets, and communities across the country.
+          In the early hours of <strong>Friday, 16 May 2026</strong>, armed gunmen descended
+          on two communities in Oriire Local Government Area — <strong>Ahoro-Esinele</strong>
+          and <strong>Yawota</strong> — targeting their schools.
         </p>
         <p>
-          Traditional surveillance is expensive, reactive, and demands constant human attention.
-          By the time a guard notices, it is often too late. <strong>AbojutoAI changes this.</strong>
+          The attackers arrived on motorcycles, <strong>dressed in military-style uniforms</strong>.
+          Residents initially believed they were security operatives. Moments later, gunfire
+          shattered the calm of the night.
         </p>
         <p>
-          Using computer vision and edge AI, AbojutoAI monitors your location continuously and
-          fires alerts the moment a person is detected — giving families, schools, and communities
-          the precious seconds that save lives.
+          The gunmen moved swiftly from classroom to classroom at
+          <strong>Community High School, Ahoro-Esinele</strong> and
+          <strong>Yawota Baptist Nursery and Primary School</strong>,
+          loading victims onto motorcycles before disappearing into the
+          dense forest reserve of the <strong>Old Oyo National Park</strong>.
         </p>
-        <div class="quote-card">
-          "They were taken in the night, and no one saw them go. We cannot let that happen again."
-          <cite>— In memory of every Nigerian taken from their families</cite>
+        <p>
+          A mathematics teacher, <strong>Mr. Michael Oyedokun</strong>, was killed in captivity.
+          The school principal, <strong>Mrs. Rachael Folawe Alamu</strong>, was driven away
+          in her own vehicle. The youngest known victim is a
+          <strong>2-year-old girl, Christianah Akanbi</strong>.
+        </p>
+        <p>
+          The communities sit <strong>42 km from Ogbomosho</strong>, surrounded by forest,
+          with poor roads, no social amenities, and minimal internet access —
+          conditions that delayed help reaching them.
+        </p>
+
+        <div style="margin-top:20px;padding:16px 20px;background:rgba(255,68,68,0.06);border:1px solid rgba(255,68,68,0.2);border-left:4px solid var(--danger);border-radius:10px;font-size:14px;color:#ffaaaa;">
+          <strong style="color:#ff7070;">AbojutoAI's Purpose:</strong>
+          AI-powered surveillance that watches continuously and fires alerts the instant
+          anyone enters — so isolated communities are never truly alone.
         </div>
       </div>
 
-      <div class="crisis-visual">
-        <div class="flag-card">
-          <div class="flag-stripe-top"></div>
-          <div class="flag-content">
-            <div class="big-icon">🕊️</div>
-            <h3>Bring Them Home</h3>
-            <p>
-              We build surveillance technology so that more families never have to search for their children.
-              Every camera we deploy is a voice saying: <em>we are watching, we will not forget.</em>
-            </p>
-            <div style="margin-top:24px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-              <div style="background:rgba(0,135,81,0.15);border:1px solid rgba(0,135,81,0.3);border-radius:8px;padding:10px 16px;font-size:13px;color:var(--ng-green2);font-weight:700;">
-                🏫 Schools Protected
-              </div>
-              <div style="background:rgba(0,135,81,0.15);border:1px solid rgba(0,135,81,0.3);border-radius:8px;padding:10px 16px;font-size:13px;color:var(--ng-green2);font-weight:700;">
-                🏠 Homes Monitored
-              </div>
-              <div style="background:rgba(0,135,81,0.15);border:1px solid rgba(0,135,81,0.3);border-radius:8px;padding:10px 16px;font-size:13px;color:var(--ng-green2);font-weight:700;">
-                🏢 Offices Secured
-              </div>
-            </div>
+      <div>
+        <!-- Photo-style card: community illustration -->
+        <div class="photo-card" style="margin-bottom:16px;">
+          <div class="photo-card-img">
+            <!-- Forest + community SVG illustration -->
+            <svg viewBox="0 0 560 350" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <!-- Sky -->
+              <rect width="560" height="350" fill="#060f08"/>
+              <!-- Stars -->
+              <circle cx="80" cy="30" r="1.2" fill="white" opacity="0.5"/>
+              <circle cx="200" cy="15" r="0.9" fill="white" opacity="0.4"/>
+              <circle cx="340" cy="40" r="1.5" fill="white" opacity="0.6"/>
+              <circle cx="450" cy="20" r="1" fill="white" opacity="0.5"/>
+              <circle cx="520" cy="50" r="1.2" fill="white" opacity="0.3"/>
+              <circle cx="30" cy="60" r="0.8" fill="white" opacity="0.4"/>
+              <circle cx="150" cy="50" r="1" fill="white" opacity="0.5"/>
+              <!-- Forest silhouette back -->
+              <path d="M0,200 Q20,160 40,170 Q60,130 80,155 Q100,120 120,145 Q140,110 160,140 Q180,105 200,135 Q220,115 240,138 Q260,100 280,130 Q300,115 320,138 Q340,105 360,132 Q380,118 400,140 Q420,105 440,138 Q460,115 480,140 Q500,120 520,148 Q540,130 560,155 L560,350 L0,350 Z" fill="#061a0a"/>
+              <!-- Forest silhouette front -->
+              <path d="M0,220 Q30,185 55,200 Q80,165 105,185 Q130,155 155,178 Q180,148 205,172 Q230,158 255,178 Q280,148 305,170 Q330,155 355,175 Q380,148 405,170 Q430,158 455,178 Q480,155 505,175 Q530,158 560,178 L560,350 L0,350 Z" fill="#082010"/>
+              <!-- Ground -->
+              <rect x="0" y="270" width="560" height="80" fill="#040e06"/>
+              <!-- Dirt path -->
+              <path d="M240,350 Q260,330 280,310 Q300,330 320,350" stroke="#1a2a15" stroke-width="18" fill="none" stroke-linecap="round"/>
+              <!-- School building -->
+              <rect x="180" y="220" width="120" height="70" fill="#0d2510" stroke="#1a4020" stroke-width="1.5"/>
+              <rect x="220" y="250" width="30" height="40" fill="#0a1e0c" stroke="#1a4020" stroke-width="1"/>
+              <polygon points="170,220 290,220 230,185" fill="#0f2d14" stroke="#1a4020" stroke-width="1.5"/>
+              <text x="240" y="212" text-anchor="middle" font-size="8" fill="#3a8050" font-family="sans-serif">SCHOOL</text>
+              <!-- Windows -->
+              <rect x="190" y="230" width="20" height="15" rx="2" fill="#1a4525" opacity="0.5"/>
+              <rect x="250" y="230" width="20" height="15" rx="2" fill="#1a4525" opacity="0.5"/>
+              <!-- Alert flash over school -->
+              <circle cx="240" cy="220" r="40" fill="rgba(255,68,68,0.08)" stroke="rgba(255,68,68,0.3)" stroke-width="1.5"/>
+              <circle cx="240" cy="220" r="60" fill="rgba(255,68,68,0.04)" stroke="rgba(255,68,68,0.15)" stroke-width="1"/>
+              <!-- Pin -->
+              <circle cx="240" cy="208" r="8" fill="#ff3333" stroke="#ff6666" stroke-width="1.5"/>
+              <line x1="240" y1="216" x2="240" y2="224" stroke="#ff3333" stroke-width="2.5"/>
+              <!-- Motorcycles (attackers) dots -->
+              <circle cx="380" cy="265" r="4" fill="#ff4444" opacity="0.7"/>
+              <circle cx="395" cy="260" r="4" fill="#ff4444" opacity="0.7"/>
+              <circle cx="370" cy="272" r="4" fill="#ff4444" opacity="0.7"/>
+              <text x="382" y="286" text-anchor="middle" font-size="7" fill="#ff7070" font-family="sans-serif">ATTACKERS</text>
+              <!-- Forest arrow -->
+              <path d="M400,265 Q450,260 490,240" stroke="#ff4444" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+              <defs>
+                <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                  <path d="M0,0 L6,3 L0,6 Z" fill="#ff4444"/>
+                </marker>
+              </defs>
+              <text x="465" y="235" font-size="7" fill="#ff7070" font-family="sans-serif" text-anchor="middle">OLD OYO</text>
+              <text x="465" y="244" font-size="7" fill="#ff7070" font-family="sans-serif" text-anchor="middle">FOREST</text>
+              <!-- Oyo state outline hint -->
+              <text x="510" y="295" font-size="9" fill="#2a5535" font-family="sans-serif" opacity="0.7">Oyo State</text>
+            </svg>
+            <div class="photo-card-label">📍 Ahoro-Esinele, Oriire LGA — Illustrated</div>
           </div>
-          <div class="flag-stripe-bottom"></div>
+          <div class="photo-card-body">
+            <h3>Community High School &amp; Yawota Baptist School</h3>
+            <p>The two schools targeted. Surrounded by the Old Oyo National Park forest reserve — 42 km from Ogbomosho, with no functioning road network or mobile signal.</p>
+          </div>
         </div>
 
-        <!-- Live connected devices count -->
-        <div style="
-          margin-top:16px;
-          background:var(--surface2);
-          border:1px solid var(--border);
-          border-radius:12px;
-          padding:16px 20px;
-          display:flex;
-          align-items:center;
-          justify-content:space-between;
-        ">
-          <div>
-            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Network Status</div>
-            <div style="font-size:22px;font-weight:800;color:var(--ng-white);" id="connectedCount">—</div>
-            <div style="font-size:12px;color:var(--muted);">alerts received</div>
+        <!-- Quick facts card -->
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px 20px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="font-size:13px;">
+            <div style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.7px;margin-bottom:3px;">State</div>
+            <div style="color:#fff;font-weight:600;">Oyo State</div>
           </div>
-          <div style="text-align:right;">
-            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">System</div>
-            <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;">
-              <span class="live-dot"></span>
-              <span style="font-size:13px;color:var(--ng-green2);font-weight:700;" id="sysStatus">Connecting…</span>
-            </div>
+          <div style="font-size:13px;">
+            <div style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.7px;margin-bottom:3px;">LGA</div>
+            <div style="color:#fff;font-weight:600;">Oriire (Ikoyi HQ)</div>
+          </div>
+          <div style="font-size:13px;">
+            <div style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.7px;margin-bottom:3px;">Date of Attack</div>
+            <div style="color:#ff7070;font-weight:600;">15–16 May 2026</div>
+          </div>
+          <div style="font-size:13px;">
+            <div style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.7px;margin-bottom:3px;">Status</div>
+            <div style="color:var(--warning);font-weight:600;">Still unresolved</div>
           </div>
         </div>
       </div>
@@ -792,147 +1004,342 @@
   </div>
 </section>
 
-<!-- ── HOW IT WORKS ───────────────────────────────────────────────── -->
+<!-- ── VICTIMS ─────────────────────────────────────────────────────── -->
+<section class="victims-section" id="victims">
+  <div class="container">
+    <div class="section-tag">The People</div>
+    <h2 class="section-title">Names We Will Not Forget</h2>
+    <p class="section-sub">These are not statistics. They are real people — teachers, students, and a toddler — taken from their school by armed gunmen.</p>
+
+    <!-- Real photographs from the incident -->
+    <div class="event-photos">
+      <div class="event-photo-card">
+        <img src="/static/michael-oyedokun.jpg" alt="Mr. Michael Oyedokun" />
+        <div class="caption">
+          <strong>Mr. Michael Oyedokun</strong> — Mathematics Teacher,
+          Community High School, Ahoro-Esinele. Abducted 16 May 2026.
+          Killed in captivity. May his soul rest in peace.
+        </div>
+      </div>
+      <div class="event-photo-card">
+        <img src="/static/teachers-abducted.jpg" alt="Abducted teachers" />
+        <div class="caption">
+          <strong>Three of the abducted teachers:</strong> Mrs Alamu F. Racheal (Principal),
+          Dn Olaleye John, and Mrs Oluwakemisola Oladeji —
+          taken from their schools in Oriire LGA, 16 May 2026.
+        </div>
+      </div>
+    </div>
+
+    <div class="victims-grid">
+
+      <div class="victim-card hero-card">
+        <div class="rip-badge">KILLED</div>
+        <img src="/static/michael-oyedokun.jpg" alt="Mr. Michael Oyedokun" class="victim-photo" />
+        <div class="victim-name">Mr. Michael Oyedokun</div>
+        <div class="victim-role teacher">Mathematics Teacher</div>
+        <div class="victim-desc">
+          A mathematics teacher at Community High School, Ahoro-Esinele.
+          Taken captive and killed in the forest. His murder was confirmed on Sunday, 17 May 2026.
+          His family received ₦1m in support from community leaders.
+        </div>
+      </div>
+
+      <div class="victim-card">
+        <img src="/static/teachers-abducted.jpg" alt="Mrs Rachael Alamu" class="victim-photo" style="object-position:0% center;" />
+        <div class="victim-name">Mrs. Rachael Folawe Alamu</div>
+        <div class="victim-role principal">School Principal — Missing</div>
+        <div class="victim-desc">
+          The principal of Community High School. She was driven away from the school in her own vehicle
+          by the attackers, who used it as their escape transport into the forest reserve.
+          She has since appealed to the government for dialogue.
+        </div>
+      </div>
+
+      <div class="victim-card">
+        <div class="victim-avatar avatar-child">👶</div>
+        <div class="victim-name">Christianah Akanbi</div>
+        <div class="victim-role child">2 Years Old — Youngest Victim</div>
+        <div class="victim-desc">
+          A 2-year-old toddler enrolled at Yawota Baptist Nursery and Primary School.
+          She is the youngest of the 46 people abducted — a toddler who had barely begun life,
+          now held in a forest by armed men.
+        </div>
+      </div>
+
+      <div class="victim-card">
+        <div class="victim-avatar avatar-child">🧒</div>
+        <div class="victim-name">39 Students</div>
+        <div class="victim-role child">Ages 2 – 16 Years</div>
+        <div class="victim-desc">
+          Thirty-nine students from Community High School and Yawota Baptist Nursery &amp; Primary School —
+          aged between 2 and 16. They were loaded onto motorcycles and carried into the Old Oyo National
+          Park forest reserve.
+        </div>
+      </div>
+
+      <div class="victim-card">
+        <div class="victim-avatar avatar-teacher">👩‍🏫</div>
+        <div class="victim-name">6 Other Teachers</div>
+        <div class="victim-role teacher">Teaching Staff — Abducted</div>
+        <div class="victim-desc">
+          Six additional teachers from the two schools were taken alongside their students.
+          Their names are known to their families and communities — each one a person who came
+          to educate and was taken for it.
+        </div>
+      </div>
+
+    </div>
+
+    <div style="background:rgba(0,135,81,0.07);border:1px solid rgba(0,135,81,0.2);border-radius:12px;padding:20px 24px;text-align:center;max-width:640px;margin:0 auto;">
+      <div style="font-size:28px;margin-bottom:10px;">🕊️</div>
+      <p style="color:var(--muted);font-size:14px;">
+        <strong style="color:#fff;">AbojutoAI is built in memory of Michael Oyedokun</strong>
+        and in solidarity with every student, teacher, and family affected by insecurity in Nigeria.
+        Every camera we deploy is a witness that says: <em style="color:var(--ng-green2);">we are watching, and we will not be silent.</em>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── TIMELINE ────────────────────────────────────────────────────── -->
+<section class="timeline-section" id="location">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;" class="incident-grid">
+      <div>
+        <div class="section-tag">Night of the Attack</div>
+        <h2 class="section-title">How It Unfolded</h2>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-time">Before midnight · 15 May 2026</div>
+            <div class="tl-title">Gunmen arrive on motorcycles</div>
+            <div class="tl-body">Armed men dressed in military-style uniforms pull up to the communities of Ahoro-Esinele and Yawota on motorcycles. Residents initially believe they are security forces.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot red"></div>
+            <div class="tl-time red">Night · Attack begins</div>
+            <div class="tl-title">Gunfire breaks out at both schools</div>
+            <div class="tl-body">The attackers open fire. They move swiftly through classrooms at Community High School and Yawota Baptist Nursery &amp; Primary School, seizing students and teachers.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot red"></div>
+            <div class="tl-time red">Same night</div>
+            <div class="tl-title">46 people taken, including Christianah Akanbi (2 yrs)</div>
+            <div class="tl-body">39 students and 7 teachers are loaded onto motorcycles. The principal, Mrs. Rachael Folawe Alamu, is driven away in her own car. 4 motorcycles are also stolen from villagers.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot red"></div>
+            <div class="tl-time red">16–17 May 2026</div>
+            <div class="tl-title">Teacher Michael Oyedokun is killed</div>
+            <div class="tl-body">A video surfaces showing mathematics teacher Michael Oyedokun being beheaded in captivity. The nation reacts with horror and outrage.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-time">May–June 2026</div>
+            <div class="tl-title">Military &amp; Air Force deployed</div>
+            <div class="tl-body">Governor Makinde confirms Nigerian Air Force intelligence support. The IGP visits Oriire communities. More soldiers are drafted to Old Oyo National Park. A curfew is imposed in Oriire LGA and 9 others.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot red"></div>
+            <div class="tl-time red">June 2026 · Now</div>
+            <div class="tl-title">46 people have spent over 30 days in captivity</div>
+            <div class="tl-body">As of June 2026, the majority of the 46 abductees remain unaccounted for. Fear and silence linger in Oriire as parents wait.</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-tag">Oriire LGA — Location</div>
+        <h2 class="section-title">Where Is Ahoro-Esinele?</h2>
+
+        <!-- Map-style pin card -->
+        <div class="map-card" style="margin-bottom:20px;">
+          <div class="map-label">📍 Oriire LGA · Oyo State</div>
+          <div class="map-pulse"></div>
+          <div class="map-pulse2"></div>
+          <div class="map-pin">
+            <div class="map-pin-head"></div>
+            <div class="map-pin-shadow"></div>
+          </div>
+          <div class="map-name">Ahoro-Esinele, Oriire LGA</div>
+
+          <!-- SVG sketch of Oyo state region -->
+          <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.35;">
+            <!-- Grid lines (map-like) -->
+            <line x1="0" y1="60"  x2="400" y2="60"  stroke="#1a3a22" stroke-width="0.5"/>
+            <line x1="0" y1="120" x2="400" y2="120" stroke="#1a3a22" stroke-width="0.5"/>
+            <line x1="0" y1="180" x2="400" y2="180" stroke="#1a3a22" stroke-width="0.5"/>
+            <line x1="0" y1="240" x2="400" y2="240" stroke="#1a3a22" stroke-width="0.5"/>
+            <line x1="80"  y1="0" x2="80"  y2="300" stroke="#1a3a22" stroke-width="0.5"/>
+            <line x1="160" y1="0" x2="160" y2="300" stroke="#1a3a22" stroke-width="0.5"/>
+            <line x1="240" y1="0" x2="240" y2="300" stroke="#1a3a22" stroke-width="0.5"/>
+            <line x1="320" y1="0" x2="320" y2="300" stroke="#1a3a22" stroke-width="0.5"/>
+            <!-- Oyo state rough shape -->
+            <path d="M80,40 L180,20 L320,60 L360,140 L340,220 L260,270 L160,260 L80,200 L60,120 Z"
+                  fill="none" stroke="#2a5535" stroke-width="1.5" stroke-dasharray="6,4"/>
+            <!-- Old Oyo National Park region -->
+            <ellipse cx="200" cy="150" rx="80" ry="60" fill="rgba(0,80,30,0.3)" stroke="#1a4020" stroke-width="1"/>
+            <text x="200" y="155" text-anchor="middle" font-size="9" fill="#3a7040" font-family="sans-serif">Old Oyo National Park</text>
+            <!-- City dots -->
+            <circle cx="240" cy="80" r="4" fill="#3a8050"/>
+            <text x="248" y="83" font-size="9" fill="#3a8050" font-family="sans-serif">Ogbomosho</text>
+            <circle cx="200" cy="220" r="3" fill="#2a6040"/>
+            <text x="208" y="223" font-size="8" fill="#2a6040" font-family="sans-serif">Ikoyi (HQ)</text>
+            <!-- 42km line -->
+            <line x1="200" y1="150" x2="240" y2="80" stroke="#ff4444" stroke-width="1" stroke-dasharray="3,3"/>
+            <text x="212" y="118" font-size="8" fill="#ff6060" font-family="sans-serif">42km</text>
+          </svg>
+        </div>
+
+        <div class="loc-card">
+          <h3>📋 Oriire LGA at a Glance</h3>
+          <div class="loc-fact"><span class="k">State</span><span class="v">Oyo State, SW Nigeria</span></div>
+          <div class="loc-fact"><span class="k">Headquarters</span><span class="v">Ikoyi</span></div>
+          <div class="loc-fact"><span class="k">Population</span><span class="v">~303,000</span></div>
+          <div class="loc-fact"><span class="k">Area</span><span class="v">2,116 km²</span></div>
+          <div class="loc-fact"><span class="k">Distance from Ogbomosho</span><span class="v">42 km</span></div>
+          <div class="loc-fact"><span class="k">Nearest forest</span><span class="v">Old Oyo National Park</span></div>
+          <div class="loc-fact"><span class="k">Road condition</span><span class="v">Poor — ₦12,000–15,000 by bike</span></div>
+          <div class="loc-fact"><span class="k">Internet access</span><span class="v">Minimal</span></div>
+          <div class="loc-fact"><span class="k">Curfew imposed</span><span class="v">June 2026</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ────────────────────────────────────────────────── -->
 <section id="how">
   <div class="container">
-    <div class="section-tag">How It Works</div>
-    <h2 class="section-title">Four Steps. Zero Delay.</h2>
-    <p class="section-sub">
-      From camera to your phone in seconds — no expensive infrastructure required.
-    </p>
+    <div class="section-tag">The Solution</div>
+    <h2 class="section-title">How AbojutoAI Helps Isolated Communities</h2>
+    <p class="section-sub">No internet? No CCTV infrastructure? AbojutoAI runs on a single laptop with a basic USB camera — and alerts go out the moment someone is detected.</p>
     <div class="steps">
       <div class="step-card">
         <div class="step-num">Step 01</div>
         <div class="step-icon">📷</div>
         <h3>Camera Watches</h3>
-        <p>A regular USB or IP camera feeds live video into AbojutoAI running on any computer, Raspberry Pi, or laptop.</p>
+        <p>A USB or IP camera feeds live video into AbojutoAI on any laptop, mini-PC, or Raspberry Pi — no specialist hardware.</p>
       </div>
       <div class="step-card">
         <div class="step-num">Step 02</div>
         <div class="step-icon">🧠</div>
-        <h3>AI Detects</h3>
-        <p>YOLOv8 analyses every frame in real time. The moment a person is spotted above the confidence threshold, an event fires.</p>
+        <h3>AI Detects Instantly</h3>
+        <p>YOLOv8 analyses every frame. The moment a person crosses the threshold — especially at night — an alert fires.</p>
       </div>
       <div class="step-card">
         <div class="step-num">Step 03</div>
         <div class="step-icon">📡</div>
-        <h3>Alert Sent</h3>
-        <p>The detection is sent to this central server — instantly reaching every subscribed browser, Telegram bot, and email.</p>
+        <h3>Alerts Sent Centrally</h3>
+        <p>Detections are pushed to this central server — reaching every subscribed browser, Telegram bot, and email across Nigeria.</p>
       </div>
       <div class="step-card">
         <div class="step-num">Step 04</div>
         <div class="step-icon">🔔</div>
-        <h3>You're Notified</h3>
-        <p>A push notification hits your phone or desktop with a snapshot, timestamp, and person count — wherever you are.</p>
+        <h3>You Are Notified</h3>
+        <p>A push notification hits your phone with a snapshot, time, and count — giving precious seconds to act.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── LIVE ALERTS ────────────────────────────────────────────────── -->
+<!-- ── LIVE ALERTS ─────────────────────────────────────────────────── -->
 <section class="alerts-section" id="alerts">
   <div class="container">
     <div class="alerts-header">
       <div>
         <div class="section-tag">Network Feed</div>
-        <h2 class="section-title" style="margin-bottom:0;">Live Alerts</h2>
+        <h2 class="section-title" style="margin-bottom:0;">Live Detection Feed</h2>
       </div>
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-        <div class="live-badge">
-          <span class="live-dot"></span>
-          LIVE
-        </div>
-        <span class="ws-status" id="wsStatusLabel">Connecting…</span>
+        <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+        <span style="font-size:12px;color:var(--muted);" id="wsStatusLabel">Connecting…</span>
       </div>
     </div>
-
     <div class="alert-feed" id="alertFeed">
       <div class="feed-empty" id="feedEmpty">
         <div class="fe">👁️</div>
-        <div>Monitoring the network… No alerts yet.</div>
-        <div style="font-size:11px;margin-top:6px;color:var(--muted);">Alerts from all connected AbojutoAI devices appear here</div>
+        <div>Monitoring the network — no alerts yet.</div>
+        <div style="font-size:11px;margin-top:6px;color:var(--muted);">Detections from all connected AbojutoAI devices appear here in real time</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── PUSH NOTIFICATIONS ─────────────────────────────────────────── -->
+<!-- ── PUSH NOTIFICATION ───────────────────────────────────────────── -->
 <section class="notify-section">
   <div class="notify-card">
     <div class="notify-icon">🔔</div>
-    <h2>Get Instant Alerts on This Device</h2>
+    <h2>Be Part of the Safety Network</h2>
     <p>
-      Allow browser notifications to receive instant push alerts from every AbojutoAI device
+      Enable browser notifications to receive instant alerts from every AbojutoAI device
       on the network — even when this tab is in the background.
     </p>
-    <button class="btn btn-primary" id="notifyBtn" onclick="requestNotifications()" style="font-size:15px;padding:14px 32px;">
+    <button class="btn btn-primary" id="notifyBtn" onclick="requestNotifications()"
+            style="font-size:15px;padding:14px 32px;">
       Enable Push Notifications
     </button>
     <div class="notify-result" id="notifyResult"></div>
   </div>
 </section>
 
-<!-- ── CONNECT YOUR DEVICE ────────────────────────────────────────── -->
+<!-- ── CONNECT ─────────────────────────────────────────────────────── -->
 <section id="connect">
   <div class="container">
     <div class="section-tag">Connect a Device</div>
     <h2 class="section-title">Add Your Camera to the Network</h2>
-    <p class="section-sub">
-      Any AbojutoAI device can push its detections to this central server.
-      Set up takes under 5 minutes.
-    </p>
+    <p class="section-sub">Any AbojutoAI device — from a school in Oriire to a home in Lagos — can push its detections to this central server.</p>
     <div class="connect-grid">
-      <div>
-        <div class="connect-steps">
-          <div class="connect-step">
-            <div class="c-step-num">1</div>
-            <div class="c-step-body">
-              <h4>Clone & install AbojutoAI</h4>
-              <p>Run <code>pip install -r requirements.txt</code> on the field device.</p>
-            </div>
+      <div class="connect-steps">
+        <div class="connect-step">
+          <div class="c-step-num">1</div>
+          <div class="c-step-body">
+            <h4>Clone &amp; install AbojutoAI</h4>
+            <p>Run <code>pip install -r requirements.txt</code> on the field device.</p>
           </div>
-          <div class="connect-step">
-            <div class="c-step-num">2</div>
-            <div class="c-step-body">
-              <h4>Set the central server URL in <code>.env</code></h4>
-              <p>Point <code>CENTRAL_URL</code> at this server so detections are forwarded automatically.</p>
-            </div>
+        </div>
+        <div class="connect-step">
+          <div class="c-step-num">2</div>
+          <div class="c-step-body">
+            <h4>Set the central server URL</h4>
+            <p>Add <code>CENTRAL_URL=http://this-server</code> to the field device's <code>.env</code>.</p>
           </div>
-          <div class="connect-step">
-            <div class="c-step-num">3</div>
-            <div class="c-step-body">
-              <h4>Add your API key</h4>
-              <p>Set <code>INGEST_API_KEY</code> in both the field device and this server's <code>.env</code>.</p>
-            </div>
+        </div>
+        <div class="connect-step">
+          <div class="c-step-num">3</div>
+          <div class="c-step-body">
+            <h4>Add an API key</h4>
+            <p>Set <code>INGEST_API_KEY</code> in both <code>.env</code> files to secure the endpoint.</p>
           </div>
-          <div class="connect-step">
-            <div class="c-step-num">4</div>
-            <div class="c-step-body">
-              <h4>Start the device</h4>
-              <p>Run <code>uvicorn main:app --port 8001</code> — alerts will appear on this page instantly.</p>
-            </div>
+        </div>
+        <div class="connect-step">
+          <div class="c-step-num">4</div>
+          <div class="c-step-body">
+            <h4>Start &amp; go live</h4>
+            <p>Run <code>uvicorn main:app --port 8001</code> — alerts appear on this page instantly.</p>
           </div>
         </div>
       </div>
       <div>
-        <div class="code-label">POST /api/ingest — Ingest an alert</div>
+        <div class="code-label">POST /api/ingest — Send an alert from any device</div>
         <div class="code-block">
-<span class="comment"># From any AbojutoAI field device:</span>
-curl -X POST <span class="string">http://this-server/api/ingest</span> \
-  -H <span class="string">"X-API-Key: your-key"</span> \
-  -H <span class="string">"Content-Type: application/json"</span> \
+<span class="cm"># From any remote AbojutoAI field device:</span>
+curl -X POST http://YOUR-SERVER/api/ingest \
+  -H <span class="st">"X-API-Key: your-key"</span> \
+  -H <span class="st">"Content-Type: application/json"</span> \
   -d '{
-  <span class="key">"device_id"</span>:  <span class="string">"School-Gate-Cam-1"</span>,
-  <span class="key">"location"</span>:   <span class="string">"Chibok Secondary School"</span>,
-  <span class="key">"count"</span>:      <span class="string">2</span>,
-  <span class="key">"confidence"</span>: <span class="string">0.91</span>
+  <span class="ky">"device_id"</span>:  <span class="st">"Ahoro-Esinele-School-Gate"</span>,
+  <span class="ky">"location"</span>:   <span class="st">"Oriire LGA, Oyo State"</span>,
+  <span class="ky">"count"</span>:      <span class="st">3</span>,
+  <span class="ky">"confidence"</span>: <span class="st">0.93</span>
 }'
         </div>
-        <div style="margin-top:16px;background:rgba(0,135,81,0.08);border:1px solid rgba(0,135,81,0.2);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--muted);">
-          <strong style="color:var(--ng-green2);">Tip:</strong>
-          Use <strong style="color:var(--ng-white);">ngrok</strong> or a cloud VPS to make this server
-          publicly reachable so field devices anywhere in Nigeria can connect.
-          <br><br>Run: <code style="color:var(--ng-green2);font-family:monospace;">ngrok http 8000</code>
+        <div style="margin-top:14px;background:rgba(0,135,81,0.07);border:1px solid rgba(0,135,81,0.2);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--muted);">
+          <strong style="color:var(--ng-green2);">No public IP?</strong>
+          Use <strong style="color:#fff;">ngrok</strong> to expose the server:
+          <code style="color:var(--ng-green2);font-family:monospace;">ngrok http 8000</code>.
+          Share the ngrok URL with all field devices.
         </div>
       </div>
     </div>
@@ -941,78 +1348,52 @@ curl -X POST <span class="string">http://this-server/api/ingest</span> \
 
 <!-- ── FOOTER ─────────────────────────────────────────────────────── -->
 <footer>
-  <div class="footer-logo">
-    <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
-      <path d="M20 3L5 9V21C5 29.5 11.5 37.4 20 39C28.5 37.4 35 29.5 35 21V9L20 3Z" fill="#008751" opacity="0.3" stroke="#008751" stroke-width="1.5"/>
-      <clipPath id="sf">
-        <path d="M20 5L7 10.5V21C7 28.5 12.8 35.5 20 37C27.2 35.5 33 28.5 33 21V10.5L20 5Z"/>
-      </clipPath>
-      <g clip-path="url(#sf)">
-        <rect x="7" y="5" width="8.7" height="32" fill="#008751"/>
-        <rect x="15.7" y="5" width="8.7" height="32" fill="#ffffff" opacity="0.9"/>
-        <rect x="24.3" y="5" width="8.7" height="32" fill="#008751"/>
-      </g>
-      <ellipse cx="20" cy="20" rx="5" ry="3.5" fill="white" opacity="0.95"/>
-      <circle cx="20" cy="20" r="2" fill="#008751"/>
-    </svg>
-    Abojuto<span>AI</span>
-  </div>
-  <div class="footer-tagline">
-    🕊️ Lend your voice for the missing. Every camera is a witness.
+  <div class="footer-brand">Abojuto<span>AI</span></div>
+  <div class="footer-copy">
+    🕊️ For Michael Oyedokun. For Christianah Akanbi. For every student still in that forest.
   </div>
   <div style="display:flex;align-items:center;gap:8px;">
-    <div class="footer-flag">
-      <div class="flag-block green"></div>
-      <div class="flag-block white"></div>
-      <div class="flag-block green"></div>
+    <div class="ng-flag-mini">
+      <div class="nf g"></div><div class="nf w"></div><div class="nf g"></div>
     </div>
     <span style="font-size:12px;color:var(--muted);">Nigeria</span>
   </div>
 </footer>
 
 <script>
-  // ── WebSocket to receive live alerts ──────────────────────────────
-  let ws;
-  let alertCount = 0;
+  let ws, alertCount = 0;
 
   function connectWS() {
     const proto = location.protocol === 'https:' ? 'wss' : 'ws';
     ws = new WebSocket(`${proto}://${location.host}/ws`);
 
     ws.onopen = () => {
-      document.getElementById('wsStatusLabel').textContent = 'Connected';
-      document.getElementById('wsStatusLabel').className = 'ws-status connected';
-      document.getElementById('sysStatus').textContent = 'Online';
+      const el = document.getElementById('wsStatusLabel');
+      el.textContent = 'Connected';
+      el.style.color = 'var(--ng-green2)';
     };
 
     ws.onmessage = (e) => {
       const msg = JSON.parse(e.data);
-
       if (msg.type === 'stats') {
-        const total = msg.data?.total_events ?? 0;
-        document.getElementById('connectedCount').textContent = total;
-        alertCount = total;
+        alertCount = msg.data?.total_events ?? 0;
       }
-
       if (msg.type === 'detection') {
         alertCount++;
-        document.getElementById('connectedCount').textContent = alertCount;
         addFeedItem(msg.event, true);
-        triggerBrowserNotification(msg.event);
+        notify(msg.event);
       }
-
       if (msg.type === 'ingest') {
         alertCount++;
-        document.getElementById('connectedCount').textContent = alertCount;
         addIngestItem(msg.event, true);
-        triggerBrowserNotification(msg.event);
+        notify(msg.event);
       }
     };
 
     ws.onclose = () => {
-      document.getElementById('wsStatusLabel').textContent = 'Reconnecting…';
-      document.getElementById('wsStatusLabel').className = 'ws-status';
-      document.getElementById('sysStatus').textContent = 'Offline';
+      const el = document.getElementById('wsStatusLabel');
+      el.textContent = 'Reconnecting…';
+      el.style.color = '';
       setTimeout(connectWS, 3000);
     };
 
@@ -1024,17 +1405,15 @@ curl -X POST <span class="string">http://this-server/api/ingest</span> \
     const feed = document.getElementById('alertFeed');
     const time = new Date(ev.timestamp).toLocaleTimeString();
     const conf = ev.avg_conf ? (ev.avg_conf * 100).toFixed(1) + '%' : '—';
-
     const item = document.createElement('div');
     item.className = 'feed-item' + (isNew ? ' new-alert' : '');
     item.innerHTML = `
       <div class="feed-icon">⚠️</div>
       <div class="feed-body">
-        <div class="feed-title">${ev.count} person${ev.count > 1 ? 's' : ''} detected</div>
-        <div class="feed-meta">Local Camera · Confidence: ${conf} · Event #${ev.id}</div>
+        <div class="feed-title">${ev.count} person${ev.count > 1 ? 's' : ''} detected — Local Camera</div>
+        <div class="feed-meta">Confidence: ${conf} · Event #${ev.id}</div>
       </div>
-      <div class="feed-time">${time}</div>
-    `;
+      <div class="feed-time">${time}</div>`;
     feed.insertBefore(item, feed.firstChild);
     if (isNew) setTimeout(() => item.classList.remove('new-alert'), 3000);
     while (feed.children.length > 20) feed.removeChild(feed.lastChild);
@@ -1044,70 +1423,60 @@ curl -X POST <span class="string">http://this-server/api/ingest</span> \
     document.getElementById('feedEmpty')?.remove();
     const feed = document.getElementById('alertFeed');
     const time = new Date(ev.timestamp).toLocaleTimeString();
-
     const item = document.createElement('div');
     item.className = 'feed-item' + (isNew ? ' new-alert' : '');
     item.innerHTML = `
       <div class="feed-icon">📡</div>
       <div class="feed-body">
-        <div class="feed-title">${ev.count} person${ev.count > 1 ? 's' : ''} detected — Remote Device</div>
-        <div class="feed-meta">
-          ${ev.device_id ? '📍 ' + ev.device_id : ''}
-          ${ev.location ? ' · ' + ev.location : ''}
-          · Confidence: ${ev.confidence ? (ev.confidence * 100).toFixed(1) + '%' : '—'}
-        </div>
+        <div class="feed-title">${ev.count} person${ev.count > 1 ? 's' : ''} detected — ${ev.device_id || 'Remote Device'}</div>
+        <div class="feed-meta">${ev.location ? '📍 ' + ev.location + ' · ' : ''}Confidence: ${ev.confidence ? (ev.confidence * 100).toFixed(1) + '%' : '—'}</div>
       </div>
-      <div class="feed-time">${time}</div>
-    `;
+      <div class="feed-time">${time}</div>`;
     feed.insertBefore(item, feed.firstChild);
     if (isNew) setTimeout(() => item.classList.remove('new-alert'), 3000);
     while (feed.children.length > 20) feed.removeChild(feed.lastChild);
   }
 
-  // ── Browser Notifications ─────────────────────────────────────────
+  function notify(ev) {
+    if (Notification.permission !== 'granted') return;
+    const body = ev.device_id
+      ? `${ev.count} person(s) at ${ev.device_id}${ev.location ? ' — ' + ev.location : ''}`
+      : `${ev.count} person(s) detected`;
+    new Notification('🚨 AbojutoAI Alert', { body });
+  }
+
   function requestNotifications() {
     if (!('Notification' in window)) {
       document.getElementById('notifyResult').textContent = 'Your browser does not support notifications.';
       return;
     }
-    Notification.requestPermission().then(perm => {
+    Notification.requestPermission().then(p => {
       const btn = document.getElementById('notifyBtn');
       const res = document.getElementById('notifyResult');
-      if (perm === 'granted') {
+      if (p === 'granted') {
         btn.textContent = '✅ Notifications Enabled';
         btn.disabled = true;
         btn.style.opacity = '0.7';
-        res.textContent = 'You will receive alerts from all connected AbojutoAI devices.';
-        new Notification('AbojutoAI', { body: 'Notifications enabled. You are now part of the safety network.' });
+        res.textContent = 'You are now part of the AbojutoAI safety network.';
+        new Notification('AbojutoAI Active', { body: 'You will receive alerts from all connected devices.' });
       } else {
-        res.textContent = 'Permission denied. You can enable notifications in your browser settings.';
+        res.textContent = 'Permission denied. Enable in your browser settings.';
         res.style.color = 'var(--danger)';
       }
     });
   }
 
-  function triggerBrowserNotification(ev) {
-    if (Notification.permission !== 'granted') return;
-    const body = ev.device_id
-      ? `${ev.count} person(s) detected at ${ev.device_id}${ev.location ? ' — ' + ev.location : ''}`
-      : `${ev.count} person(s) detected`;
-    new Notification('🚨 AbojutoAI Alert', { body });
-  }
-
-  // ── Init ──────────────────────────────────────────────────────────
   if ('Notification' in window && Notification.permission === 'granted') {
     const btn = document.getElementById('notifyBtn');
-    btn.textContent = '✅ Notifications Already Enabled';
+    btn.textContent = '✅ Already Enabled';
     btn.disabled = true;
     btn.style.opacity = '0.7';
   }
 
-  // Load initial stats
   fetch('/api/stats').then(r => r.json()).then(d => {
-    document.getElementById('connectedCount').textContent = d.total_events ?? 0;
+    alertCount = d.total_events ?? 0;
   }).catch(() => {});
 
-  // Load existing events into feed
   fetch('/api/events?limit=10').then(r => r.json()).then(evs => {
     evs.slice().reverse().forEach(ev => addFeedItem(ev, false));
   }).catch(() => {});
