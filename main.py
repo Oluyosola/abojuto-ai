@@ -91,8 +91,13 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # ── Routes ────────────────────────────────────────────────────────────────────
 
 @app.get("/", response_class=HTMLResponse)
+async def landing():
+    with open("static/landing.html", encoding="utf-8") as f:
+        return f.read()
+
+
+@app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard():
-    """Serve the dashboard HTML."""
     with open("static/index.html", encoding="utf-8") as f:
         return f.read()
 
@@ -159,3 +164,36 @@ async def camera_off():
 async def camera_on():
     camera.resume()
     return {"camera_paused": False}
+
+
+@app.post("/api/ingest")
+async def ingest_alert(request: Request):
+    """Receive detections from remote AbojutoAI field devices."""
+    api_key = os.getenv("INGEST_API_KEY", "")
+    if api_key:
+        provided = request.headers.get("X-API-Key", "")
+        if provided != api_key:
+            raise HTTPException(status_code=401, detail="Invalid API key")
+
+    body = await request.json()
+    event = {
+        "type":       "ingest",
+        "device_id":  body.get("device_id", "Unknown Device"),
+        "location":   body.get("location", ""),
+        "count":      int(body.get("count", 1)),
+        "confidence": float(body.get("confidence", 0.0)),
+        "timestamp":  datetime.now(timezone.utc).isoformat(),
+    }
+
+    msg = json.dumps({"type": "ingest", "event": event})
+    dead = []
+    for ws in ws_clients:
+        try:
+            await ws.send_text(msg)
+        except Exception:
+            dead.append(ws)
+    for d in dead:
+        ws_clients.remove(d)
+
+    logger.info(f"Ingest from {event['device_id']}: {event['count']} person(s)")
+    return {"status": "ok", "broadcasted_to": len(ws_clients)}

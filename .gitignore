@@ -1,0 +1,29 @@
+# Environment — never commit secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+venv/
+.venv/
+env/
+
+# Model weights (large binary, download separately)
+*.pt
+*.onnx
+models/
+
+# Runtime data
+db/
+server.log
+*.log
+
+# Snapshots captured at runtime
+static/snapshots/
+
+# OS
+.DS_Store
+Thumbs.db
