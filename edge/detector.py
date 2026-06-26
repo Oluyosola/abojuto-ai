@@ -34,9 +34,12 @@ THREAT_MAP: Dict[str, tuple] = {
     "rifle":      ("CRITICAL", (0, 0, 220)),
     "firearm":    ("CRITICAL", (0, 0, 220)),
     "weapon":     ("CRITICAL", (0, 0, 220)),
+    "handgun":    ("CRITICAL", (0, 0, 220)),
     "ammunition": ("CRITICAL", (0, 0, 220)),
     "grenade":    ("CRITICAL", (0, 0, 220)),
     "explosive":  ("CRITICAL", (0, 0, 220)),
+    "machete":    ("HIGH",     (0, 60, 255)),
+    "blade":      ("HIGH",     (0, 60, 255)),
 }
 
 SEVERITY_RANK = {"LOW": 1, "MEDIUM": 2, "HIGH": 3, "CRITICAL": 4}
@@ -70,6 +73,34 @@ if _weapons_path and Path(_weapons_path).exists():
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
+
+LOW_LIGHT_THRESHOLD = int(os.getenv("LOW_LIGHT_THRESHOLD", "80"))
+WEAPON_HELD_OVERLAP = 0.30
+
+
+def _enhance_low_light(frame: np.ndarray) -> np.ndarray:
+    """Apply CLAHE if mean brightness is below LOW_LIGHT_THRESHOLD."""
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    if float(np.mean(gray)) >= LOW_LIGHT_THRESHOLD:
+        return frame
+    lab = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
+    l_ch, a_ch, b_ch = cv2.split(lab)
+    clahe = cv2.createCLAHE(clipLimit=2.5, tileGridSize=(8, 8))
+    merged = cv2.merge((clahe.apply(l_ch), a_ch, b_ch))
+    return cv2.cvtColor(merged, cv2.COLOR_LAB2BGR)
+
+
+def _weapon_held_by_person(weapon_bbox, person_bboxes) -> bool:
+    """True if the weapon bbox overlaps any person bbox by > WEAPON_HELD_OVERLAP."""
+    wx1, wy1, wx2, wy2 = weapon_bbox
+    w_area = max(1e-6, (wx2 - wx1) * (wy2 - wy1))
+    for px1, py1, px2, py2 in person_bboxes:
+        ix = max(0.0, min(wx2, px2) - max(wx1, px1))
+        iy = max(0.0, min(wy2, py2) - max(wy1, py1))
+        if (ix * iy) / w_area > WEAPON_HELD_OVERLAP:
+            return True
+    return False
+
 
 def save_snapshot(frame: np.ndarray) -> str:
     ts   = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
@@ -114,6 +145,8 @@ def detect_frame(
     Returns (annotated_frame, detections, threat_level)
     detections = [{"label", "confidence", "bbox", "threat"}, ...]
     """
+    frame = _enhance_low_light(frame)
+
     if _coco_model is None:
         annotated, dets = _hog_detect(frame)
         return annotated, dets, _top_threat(dets)
@@ -150,19 +183,26 @@ def detect_frame(
             cls_name = _weapons_model.names[int(box.cls[0])].lower()
             threat, color = THREAT_MAP.get(cls_name, ("HIGH", (0, 60, 255)))
             x1, y1, x2, y2 = map(int, box.xyxy[0])
+            # Escalate to CRITICAL if the weapon is being held by a person
+            if _weapon_held_by_person([x1, y1, x2, y2], person_boxes):
+                threat = "CRITICAL"
+                color  = (0, 0, 200)
             detections.append({"label": cls_name, "confidence": round(conf, 3),
                                "bbox": [x1,y1,x2,y2], "threat": threat})
             _draw_box(annotated, x1, y1, x2, y2, cls_name, conf, color)
 
     # ── Loitering check ───────────────────────────────────────────────────────
     if loitering_tracker and person_boxes:
-        loitering_ids = loitering_tracker.update(person_boxes)
-        if loitering_ids:
+        loitering_indices = set(loitering_tracker.update(person_boxes))
+        if loitering_indices:
+            person_idx = 0
             for det in detections:
                 if det["label"] == "person":
-                    det["label"]  = "loitering"
-                    det["threat"] = "MEDIUM"
-            n = len(loitering_ids)
+                    if person_idx in loitering_indices:
+                        det["label"]  = "loitering"
+                        det["threat"] = "MEDIUM"
+                    person_idx += 1
+            n = len(loitering_indices)
             cv2.putText(annotated, f"LOITERING x{n}",
                         (10, annotated.shape[0] - 12),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.65, (0,165,255), 2)
@@ -284,17 +324,18 @@ class CameraDetector:
             now        = time.time()
             run_detect = (now - last_detect) >= self.detection_interval
 
+            # Always push the raw frame immediately so the stream never stalls
+            _, raw_buf = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, 72])
+            with self._lock:
+                self._latest_frame = raw_buf.tobytes()
+
             if run_detect:
+                last_detect = now
                 # Motion pre-filter — save energy on static scenes
                 if self.motion_filter and prev_frame is not None:
                     if not _motion_detected(prev_frame, frame):
-                        _, buf = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, 72])
-                        with self._lock:
-                            self._latest_frame = buf.tobytes()
                         prev_frame = frame.copy()
                         continue
-
-                last_detect = now
                 annotated, detections, threat = detect_frame(
                     frame,
                     confidence_threshold=self.confidence_threshold,
@@ -307,12 +348,9 @@ class CameraDetector:
                     snapshot = save_snapshot(annotated)
                     self._fire(snapshot, detections, threat)
 
-                _, buf = cv2.imencode(".jpg", annotated, [cv2.IMWRITE_JPEG_QUALITY, 75])
-            else:
-                _, buf = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, 72])
-
-            with self._lock:
-                self._latest_frame = buf.tobytes()
+                _, ann_buf = cv2.imencode(".jpg", annotated, [cv2.IMWRITE_JPEG_QUALITY, 75])
+                with self._lock:
+                    self._latest_frame = ann_buf.tobytes()
 
         cap.release()
 

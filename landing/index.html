@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Vigirix — Sustainable AI Surveillance</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f8fafc;--surface:#fff;--border:#e2e8f0;
+  --accent:#0d9488;--accent2:#0f766e;--text:#0f172a;--muted:#64748b;
+  --danger:#dc2626;--green:#16a34a;
+  --font:'Inter',system-ui,sans-serif;
+}
+html,body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:15px;line-height:1.6}
+a{text-decoration:none;color:inherit}
+
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;height:64px;
+  background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{display:flex;align-items:center;gap:9px;font-size:18px;font-weight:800;letter-spacing:0.3px}
+.nav-logo .icon{
+  width:32px;height:32px;background:var(--accent);border-radius:7px;
+  display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;
+}
+.nav-cta{
+  background:var(--accent);color:#fff;padding:8px 20px;border-radius:8px;
+  font-size:13px;font-weight:700;transition:background 0.15s;
+}
+.nav-cta:hover{background:var(--accent2)}
+
+/* Hero */
+.hero{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:100px 24px 60px;text-align:center;
+  background:linear-gradient(180deg,#f0fdfa 0%,var(--bg) 100%);
+}
+.hero-inner{max-width:680px}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:7px;
+  background:#f0fdfa;border:1px solid #99f6e4;border-radius:100px;
+  padding:5px 14px;font-size:12px;font-weight:700;color:var(--accent);
+  margin-bottom:24px;letter-spacing:0.3px;
+}
+.hero h1{
+  font-size:clamp(36px,5.5vw,62px);font-weight:900;
+  line-height:1.1;letter-spacing:-1.5px;margin-bottom:18px;
+}
+.hero h1 span{color:var(--accent)}
+.hero p{font-size:17px;color:var(--muted);max-width:520px;margin:0 auto 32px}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:12px 24px;border-radius:9px;font-size:14px;font-weight:700;
+  transition:all 0.15s;cursor:pointer;text-decoration:none;border:none;
+}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 4px 14px rgba(13,148,136,0.3)}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-1px)}
+.btn-outline{background:#fff;color:var(--text);border:1.5px solid var(--border)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Features */
+.features{padding:80px 24px;max-width:1000px;margin:0 auto}
+.section-tag{
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;
+  color:var(--accent);margin-bottom:10px;
+}
+.section-title{font-size:clamp(24px,3.5vw,36px);font-weight:800;margin-bottom:12px;letter-spacing:-0.5px}
+.section-sub{font-size:16px;color:var(--muted);max-width:520px;margin-bottom:44px}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+.feature-card{
+  background:#fff;border:1px solid var(--border);border-radius:12px;
+  padding:22px 20px;transition:border-color 0.2s,transform 0.2s;
+}
+.feature-card:hover{border-color:var(--accent);transform:translateY(-3px)}
+.feature-card .icon{font-size:28px;margin-bottom:12px}
+.feature-card h3{font-size:15px;font-weight:700;margin-bottom:6px}
+.feature-card p{font-size:13px;color:var(--muted)}
+
+/* Threat levels */
+.threats{background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:60px 24px}
+.threats-inner{max-width:800px;margin:0 auto;text-align:center}
+.threat-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:32px}
+.threat-chip{
+  display:flex;align-items:center;gap:8px;padding:10px 18px;
+  border-radius:10px;font-size:13px;font-weight:700;border:1.5px solid;
+}
+.chip-LOW{background:#f0fdf4;color:#16a34a;border-color:#bbf7d0}
+.chip-MEDIUM{background:#fffbeb;color:#d97706;border-color:#fde68a}
+.chip-HIGH{background:#fef2f2;color:#dc2626;border-color:#fecaca}
+.chip-CRITICAL{background:#7c2d12;color:#fff;border-color:transparent}
+
+/* Happenings */
+.happenings-section{padding:70px 24px;max-width:700px;margin:0 auto}
+.happenings-list{display:flex;flex-direction:column;gap:14px;margin-top:28px}
+.happening-card{
+  background:#fff;border:1px solid var(--border);border-radius:12px;
+  padding:18px 20px;
+}
+.happening-card h4{font-size:15px;font-weight:700;margin-bottom:5px}
+.happening-card p{font-size:14px;color:var(--muted);line-height:1.55}
+.happening-card .meta{font-size:11px;color:var(--muted);margin-top:8px}
+.happening-card img{width:100%;border-radius:8px;margin-bottom:12px;object-fit:cover;max-height:180px}
+.no-happenings{text-align:center;color:var(--muted);padding:32px 0;font-size:14px}
+
+/* Footer */
+footer{
+  background:var(--text);color:#94a3b8;padding:30px 48px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+}
+.footer-logo{display:flex;align-items:center;gap:8px;color:#fff;font-weight:700;font-size:15px}
+.footer-logo .icon{width:26px;height:26px;background:var(--accent);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:13px}
+footer p{font-size:12px}
+
+@media(max-width:640px){
+  nav{padding:0 20px}
+  .happenings-section{padding:50px 20px}
+  .features{padding:60px 20px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <div class="icon">🛡️</div>
+    VIGIRIX
+  </div>
+  <a href="/dashboard/" class="nav-cta">Open Dashboard →</a>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">
+      <span>🌱</span> Sustainable · Scalable · Real-time
+    </div>
+    <h1>AI Surveillance.<br/><span>Smarter.</span> Greener.</h1>
+    <p>Vigirix detects persons, weapons, and suspicious behaviour at the edge — using minimal compute, zero cloud dependency, and real-time alerts.</p>
+    <div class="hero-btns">
+      <a href="/dashboard/" class="btn btn-primary">🔐 Open Dashboard</a>
+      <a href="#features" class="btn btn-outline">How It Works</a>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features" id="features">
+  <div class="section-tag">What Vigirix Does</div>
+  <h2 class="section-title">Built for Efficiency</h2>
+  <p class="section-sub">Every design decision optimises for sustainability — less compute, less power, more intelligence.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="icon">⚡</div>
+      <h3>Motion Pre-filter</h3>
+      <p>AI only runs when pixels change. Static scenes cost near-zero compute — saving ~70% energy.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🔍</div>
+      <h3>Multi-class Detection</h3>
+      <p>Persons, knives, firearms, ammunition — all detected in a single lightweight YOLOv8n pass.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">⏳</div>
+      <h3>Loitering Detection</h3>
+      <p>Tracks dwell time. Flags anyone who lingers in restricted areas beyond a configurable threshold.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">📡</div>
+      <h3>Edge Computing</h3>
+      <p>Detection runs locally on any device. No footage upload. No cloud dependency. Minimal bandwidth.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🔔</div>
+      <h3>Instant Alerts</h3>
+      <p>Critical threats trigger email, Telegram, and browser push simultaneously — within seconds.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🏗️</div>
+      <h3>Microservice Ready</h3>
+      <p>Edge and server are independent services. Deploy one camera or a thousand — the architecture scales.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Threat levels -->
+<section class="threats">
+  <div class="threats-inner">
+    <div class="section-tag" style="text-align:center">Threat Classification</div>
+    <h2 class="section-title">Four-level Response System</h2>
+    <p style="color:var(--muted);font-size:15px">Every detection is classified instantly. Response is proportional to severity.</p>
+    <div class="threat-row">
+      <div class="threat-chip chip-LOW">🟢 LOW — Person detected</div>
+      <div class="threat-chip chip-MEDIUM">🟡 MEDIUM — Loitering</div>
+      <div class="threat-chip chip-HIGH">🔴 HIGH — Blade / Knife</div>
+      <div class="threat-chip chip-CRITICAL">🚨 CRITICAL — Firearm / Weapon</div>
+    </div>
+  </div>
+</section>
+
+<!-- Happenings (dynamic from server) -->
+<section class="happenings-section">
+  <div class="section-tag">Updates</div>
+  <h2 class="section-title">Latest from the Network</h2>
+  <div class="happenings-list" id="happenings-list">
+    <div class="no-happenings">Loading updates…</div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">
+    <div class="icon">🛡️</div> VIGIRIX
+  </div>
+  <p>Sustainable AI Surveillance · Built for Green Software Engineering</p>
+</footer>
+
+<script>
+const API = '';  // same origin — server serves this page
+
+async function loadHappenings() {
+  const list = document.getElementById('happenings-list');
+  try {
+    const r = await fetch(`${API}/api/happenings?limit=5`);
+    const haps = await r.json();
+    if (!haps.length) {
+      list.innerHTML = '<div class="no-happenings">No updates posted yet.</div>';
+      return;
+    }
+    list.innerHTML = haps.map(h => {
+      const t = new Date(h.timestamp + 'Z').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+      const img = h.image_path ? `<img src="/static/uploads/${h.image_path.split('/').pop()}" alt="${h.title}"/>` : '';
+      return `<div class="happening-card">
+        ${img}
+        <h4>${h.title}</h4>
+        <p>${h.body}</p>
+        <div class="meta">${t}</div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    list.innerHTML = '<div class="no-happenings">Could not load updates.</div>';
+  }
+}
+
+loadHappenings();
+</script>
+</body>
+</html>

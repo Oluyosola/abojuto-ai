@@ -45,7 +45,7 @@ class LoiteringTracker:
     def update(self, person_boxes: List[List[int]]) -> List[int]:
         """
         person_boxes: list of [x1, y1, x2, y2] for each detected person.
-        Returns: list of track IDs currently flagged as loitering.
+        Returns: list of input box indices (0-based) currently flagged as loitering.
         """
         centroids = [self._centroid(b) for b in person_boxes]
         now = time.monotonic()
@@ -53,11 +53,13 @@ class LoiteringTracker:
         if not self._tracks:
             for c in centroids:
                 self._register(c, now)
-        else:
-            self._match_and_update(centroids, now)
+            self._drop_stale()
+            return []
 
+        cent_to_tid = self._match_and_update(centroids, now)
         self._drop_stale()
-        return [t.track_id for t in self._tracks.values() if t.loitering]
+        return [ci for ci, tid in cent_to_tid.items()
+                if tid in self._tracks and self._tracks[tid].loitering]
 
     def loitering_count(self) -> int:
         return sum(1 for t in self._tracks.values() if t.loitering)
@@ -86,10 +88,12 @@ class LoiteringTracker:
         )
         self._next_id += 1
 
-    def _match_and_update(self, centroids: List[Tuple[float, float]], now: float):
+    def _match_and_update(self, centroids: List[Tuple[float, float]], now: float) -> Dict[int, int]:
+        """Returns mapping of centroid_index → track_id for matched pairs."""
         track_ids   = list(self._tracks.keys())
         used_tracks = set()
         used_cents  = set()
+        cent_to_tid: Dict[int, int] = {}
 
         # Greedy nearest-neighbour matching
         pairs = []
@@ -108,6 +112,7 @@ class LoiteringTracker:
                 continue
             used_cents.add(ci)
             used_tracks.add(tid)
+            cent_to_tid[ci] = tid
             t = self._tracks[tid]
             t.centroid    = centroids[ci]
             t.last_seen   = now
@@ -125,6 +130,8 @@ class LoiteringTracker:
         for ci, c in enumerate(centroids):
             if ci not in used_cents:
                 self._register(c, now)
+
+        return cent_to_tid
 
     def _drop_stale(self):
         stale = [tid for tid, t in self._tracks.items()

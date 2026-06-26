@@ -100,14 +100,26 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # ── Routes ────────────────────────────────────────────────────────────────────
 
+def _placeholder_frame() -> bytes:
+    """Single JPEG frame shown before the first camera frame arrives."""
+    import numpy as np
+    import cv2
+    img = np.zeros((480, 640, 3), dtype=np.uint8)
+    cv2.putText(img, "Camera starting...", (160, 240),
+                cv2.FONT_HERSHEY_SIMPLEX, 1.0, (180, 180, 180), 2, cv2.LINE_AA)
+    _, buf = cv2.imencode(".jpg", img)
+    return buf.tobytes()
+
+
+_PLACEHOLDER = _placeholder_frame()
+
+
 def _mjpeg_generator():
     import time
     while True:
-        frame = camera.get_frame()
-        if frame:
-            yield (b"--frame\r\nContent-Type: image/jpeg\r\n\r\n" + frame + b"\r\n")
-        else:
-            time.sleep(0.05)
+        frame = camera.get_frame() or _PLACEHOLDER
+        yield (b"--frame\r\nContent-Type: image/jpeg\r\n\r\n" + frame + b"\r\n")
+        time.sleep(0.04)  # ~25 fps cap
 
 
 @app.get("/video_feed")

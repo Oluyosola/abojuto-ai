@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Vigirix — Dashboard</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sidebar:#0f1f1e;--sidebar2:#17302f;--sidebar-text:#7fb5af;--sidebar-active:#fff;
+  --bg:#f0f5f4;--surface:#fff;--border:#d4e8e5;
+  --accent:#0d9488;--accent2:#0f766e;
+  --success:#16a34a;--warning:#d97706;--danger:#dc2626;--critical:#7c2d12;
+  --text:#111827;--muted:#6b7280;
+  --font:'Inter',system-ui,sans-serif;
+  --radius:10px;
+}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px}
+a{text-decoration:none;color:inherit}
+button{font-family:var(--font);cursor:pointer}
+input,textarea,select{font-family:var(--font)}
+
+/* ── Login ─────────────────────────────────────────────────────── */
+#login-screen{
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;background:linear-gradient(135deg,#0a1818,#0d2e2b);
+}
+.login-card{
+  background:#fff;border-radius:16px;padding:40px 36px;width:100%;max-width:380px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.25);
+}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-logo .shield{
+  width:54px;height:54px;background:var(--accent);border-radius:12px;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:26px;margin-bottom:10px;
+}
+.login-logo h1{font-size:22px;font-weight:800;letter-spacing:0.5px;color:#111}
+.login-logo p{font-size:12px;color:var(--muted);margin-top:3px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+.form-group input{
+  width:100%;padding:11px 14px;border:1.5px solid var(--border);
+  border-radius:8px;font-size:14px;outline:none;transition:border-color 0.2s;
+  background:#f9fafb;
+}
+.form-group input:focus{border-color:var(--accent);background:#fff}
+.btn-login{
+  width:100%;padding:12px;background:var(--accent);color:#fff;border:none;
+  border-radius:8px;font-size:14px;font-weight:700;margin-top:8px;
+  transition:background 0.2s;
+}
+.btn-login:hover{background:var(--accent2)}
+.login-error{color:var(--danger);font-size:12px;text-align:center;margin-top:10px;min-height:16px}
+
+/* ── App shell ─────────────────────────────────────────────────── */
+#app{display:none;height:100vh;grid-template-columns:220px 1fr;grid-template-rows:1fr}
+
+/* ── Sidebar ───────────────────────────────────────────────────── */
+.sidebar{
+  background:var(--sidebar);display:flex;flex-direction:column;
+  padding:0;overflow:hidden;
+}
+.sidebar-header{
+  padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,0.07);
+}
+.sidebar-logo{display:flex;align-items:center;gap:10px}
+.logo-icon{
+  width:34px;height:34px;background:var(--accent);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
+}
+.logo-name{font-size:17px;font-weight:800;color:#fff;letter-spacing:0.5px}
+.sidebar-nav{flex:1;padding:12px 0;overflow-y:auto}
+.nav-item{
+  display:flex;align-items:center;gap:11px;padding:10px 20px;
+  color:var(--sidebar-text);font-size:13px;font-weight:500;
+  cursor:pointer;transition:all 0.15s;border-left:3px solid transparent;
+  user-select:none;
+}
+.nav-item:hover{background:var(--sidebar2);color:#fff}
+.nav-item.active{background:var(--sidebar2);color:var(--sidebar-active);border-left-color:var(--accent)}
+.nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.sidebar-footer{padding:14px 20px;border-top:1px solid rgba(255,255,255,0.07)}
+.user-pill{display:flex;align-items:center;gap:10px;cursor:pointer}
+.user-avatar{
+  width:32px;height:32px;border-radius:50%;background:var(--accent);
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;
+}
+.user-name{font-size:12px;color:var(--sidebar-text);font-weight:600}
+.btn-logout{
+  margin-top:6px;width:100%;padding:7px;background:rgba(220,38,38,0.12);
+  border:1px solid rgba(220,38,38,0.25);color:#f87171;border-radius:6px;
+  font-size:12px;font-weight:600;
+}
+.btn-logout:hover{background:rgba(220,38,38,0.22)}
+
+/* ── Main content ──────────────────────────────────────────────── */
+.main{display:flex;flex-direction:column;overflow:hidden}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;height:58px;background:#fff;border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.topbar-title{font-size:17px;font-weight:700}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.notif-btn{
+  position:relative;background:none;border:none;font-size:20px;color:var(--muted);
+  padding:4px;
+}
+.notif-badge{
+  position:absolute;top:0;right:0;width:16px;height:16px;background:var(--danger);
+  border-radius:50%;font-size:9px;font-weight:700;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+}
+.status-pill{
+  display:flex;align-items:center;gap:6px;padding:5px 12px;
+  border-radius:100px;border:1px solid var(--border);font-size:12px;font-weight:600;
+  color:var(--muted);
+}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--muted)}
+.status-dot.live{background:var(--success);box-shadow:0 0 5px var(--success);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+.content{flex:1;overflow-y:auto;padding:24px}
+
+/* ── Pages ─────────────────────────────────────────────────────── */
+.page{display:none}
+.page.active{display:block}
+
+/* ── Stat cards ─────────────────────────────────────────────────── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat-card{
+  background:#fff;border-radius:var(--radius);padding:18px 20px;
+  border:1px solid var(--border);display:flex;align-items:center;gap:14px;
+}
+.stat-icon{
+  width:44px;height:44px;border-radius:10px;display:flex;
+  align-items:center;justify-content:center;font-size:20px;flex-shrink:0;
+}
+.stat-icon.blue{background:#f0fdfa}
+.stat-icon.green{background:#f0fdf4}
+.stat-icon.yellow{background:#fffbeb}
+.stat-icon.red{background:#fef2f2}
+.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+.stat-value{font-size:26px;font-weight:800;line-height:1}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* ── Two-col grid ───────────────────────────────────────────────── */
+.two-col{display:grid;grid-template-columns:1fr 380px;gap:16px}
+.card{background:#fff;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden}
+.card-header{
+  padding:14px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.card-title{font-size:13px;font-weight:700}
+.card-body{padding:16px 18px}
+
+/* ── Camera ─────────────────────────────────────────────────────── */
+.cam-wrap{position:relative;background:#000;aspect-ratio:16/9}
+.cam-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.cam-overlay{
+  position:absolute;top:10px;left:10px;
+  display:flex;gap:7px;align-items:center;
+}
+.live-badge{
+  background:var(--danger);color:#fff;border-radius:5px;
+  padding:3px 8px;font-size:11px;font-weight:700;letter-spacing:0.5px;
+}
+.cam-controls{
+  padding:12px 18px;display:flex;gap:10px;
+  background:#f8fafc;border-top:1px solid var(--border);
+}
+.cam-btn{
+  flex:1;padding:8px;border-radius:7px;border:1px solid var(--border);
+  background:#fff;font-size:12px;font-weight:600;color:var(--text);
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  transition:all 0.15s;
+}
+.cam-btn:hover{background:var(--bg);border-color:#c0c0c0}
+.cam-btn.danger{color:var(--danger);border-color:rgba(220,38,38,0.3)}
+.cam-btn.danger:hover{background:#fef2f2}
+
+/* ── Alerts feed ─────────────────────────────────────────────────── */
+.alert-feed{max-height:420px;overflow-y:auto}
+.alert-item{
+  padding:12px 18px;border-bottom:1px solid var(--border);
+  display:flex;gap:10px;align-items:flex-start;cursor:pointer;
+  transition:background 0.15s;
+}
+.alert-item:hover{background:#f8fafc}
+.alert-item:last-child{border-bottom:none}
+.alert-thumb{
+  width:52px;height:38px;border-radius:5px;object-fit:cover;
+  background:#e5e7eb;flex-shrink:0;
+}
+.alert-info{flex:1;min-width:0}
+.alert-time{font-size:11px;color:var(--muted);margin-bottom:2px}
+.alert-title{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.alert-camera{font-size:11px;color:var(--muted)}
+.threat-badge{
+  padding:3px 8px;border-radius:5px;font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.5px;flex-shrink:0;align-self:center;
+}
+.threat-LOW{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+.threat-MEDIUM{background:#fffbeb;color:#d97706;border:1px solid #fde68a}
+.threat-HIGH{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+.threat-CRITICAL{background:#7c2d12;color:#fff;border:none}
+
+/* ── Incidents table ─────────────────────────────────────────────── */
+.search-bar{
+  display:flex;gap:10px;margin-bottom:16px;
+}
+.search-bar input{
+  flex:1;padding:9px 12px;border:1.5px solid var(--border);
+  border-radius:8px;font-size:13px;outline:none;
+}
+.search-bar input:focus{border-color:var(--accent)}
+.filter-select{
+  padding:9px 12px;border:1.5px solid var(--border);
+  border-radius:8px;font-size:13px;outline:none;background:#fff;
+}
+.incidents-table{width:100%;border-collapse:collapse}
+.incidents-table th{
+  text-align:left;padding:10px 14px;font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);
+  border-bottom:2px solid var(--border);background:#f8fafc;
+}
+.incidents-table td{
+  padding:11px 14px;border-bottom:1px solid var(--border);
+  font-size:13px;vertical-align:middle;
+}
+.incidents-table tr:hover td{background:#f8fafc;cursor:pointer}
+.incidents-table tr:last-child td{border-bottom:none}
+.pagination{display:flex;align-items:center;justify-content:center;gap:16px;padding:14px 0 4px;border-top:1px solid var(--border);margin-top:4px}
+.pagination button{padding:6px 16px;border:1.5px solid var(--border);background:#fff;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text);transition:all 0.15s}
+.pagination button:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.pagination button:disabled{opacity:0.35;cursor:default}
+
+/* ── Device cards ───────────────────────────────────────────────── */
+.devices-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.device-card{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px;
+}
+.device-card .d-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.device-card .d-id{font-size:14px;font-weight:700}
+.device-status{
+  width:9px;height:9px;border-radius:50%;
+}
+.device-status.active{background:var(--success);box-shadow:0 0 5px var(--success)}
+.device-status.offline{background:var(--muted)}
+.device-card .d-loc{font-size:12px;color:var(--muted);margin-bottom:8px}
+.device-card .d-seen{font-size:11px;color:var(--muted)}
+
+/* ── Admin / Happenings ────────────────────────────────────────── */
+.happening-form{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px;margin-bottom:20px;
+}
+.happening-form h3{font-size:14px;font-weight:700;margin-bottom:14px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px}
+.field input,.field textarea{
+  width:100%;padding:9px 12px;border:1.5px solid var(--border);
+  border-radius:7px;font-size:13px;outline:none;
+}
+.field input:focus,.field textarea:focus{border-color:var(--accent)}
+.field textarea{min-height:90px;resize:vertical}
+.btn{
+  padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;
+  border:none;transition:all 0.15s;cursor:pointer;
+}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent2)}
+.btn-sm{padding:5px 12px;font-size:11px;font-weight:700}
+.btn-danger{background:var(--danger);color:#fff}
+.happenings-list{display:flex;flex-direction:column;gap:10px}
+.happening-card{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px 18px;display:flex;gap:14px;align-items:flex-start;
+}
+.happening-card img{width:72px;height:52px;object-fit:cover;border-radius:6px;flex-shrink:0}
+.happening-body{flex:1}
+.happening-body h4{font-size:14px;font-weight:700;margin-bottom:4px}
+.happening-body p{font-size:13px;color:var(--muted);line-height:1.5}
+.happening-meta{font-size:11px;color:var(--muted);margin-top:5px}
+
+/* ── Modal ──────────────────────────────────────────────────────── */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);
+  z-index:200;align-items:center;justify-content:center;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:#fff;border-radius:14px;max-width:560px;width:90%;
+  max-height:85vh;overflow-y:auto;
+}
+.modal-header{
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.modal-title{font-size:15px;font-weight:700}
+.modal-close{background:none;border:none;font-size:20px;color:var(--muted);padding:2px 6px}
+.modal-body{padding:20px}
+.detail-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.detail-row:last-child{border-bottom:none}
+.detail-key{color:var(--muted)}
+.detail-val{font-weight:600}
+.modal-snap{width:100%;border-radius:8px;margin-top:12px;display:block}
+
+/* ── Empty state ─────────────────────────────────────────────────── */
+.empty{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty .ei{font-size:40px;margin-bottom:10px;opacity:0.35}
+
+/* ── Toast ──────────────────────────────────────────────────────── */
+.toast-wrap{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:8px}
+.toast{
+  background:#0f1f1e;color:#fff;border-radius:9px;padding:11px 16px;
+  font-size:13px;font-weight:500;min-width:220px;
+  animation:slideUp 0.3s ease;box-shadow:0 4px 16px rgba(0,0,0,0.25);
+}
+.toast.success{border-left:3px solid var(--success)}
+.toast.danger{border-left:3px solid var(--danger)}
+.toast.warning{border-left:3px solid var(--warning)}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- ── Login ─────────────────────────────────────────────────────── -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="shield">🛡️</div>
+      <h1>VIGIRIX</h1>
+      <p>AI-Powered Surveillance</p>
+    </div>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="inp-user" placeholder="admin" autocomplete="username"/>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="inp-pass" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <button class="btn-login" onclick="doLogin()">Login</button>
+    <div class="login-error" id="login-err"></div>
+  </div>
+</div>
+
+<!-- ── App ───────────────────────────────────────────────────────── -->
+<div id="app" style="display:grid">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="logo-icon">🛡️</div>
+        <span class="logo-name">VIGIRIX</span>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-item active" data-page="dashboard">
+        <span class="nav-icon">🏠</span> Dashboard
+      </div>
+      <div class="nav-item" data-page="liveview">
+        <span class="nav-icon">📹</span> Live View
+      </div>
+      <div class="nav-item" data-page="incidents">
+        <span class="nav-icon">📋</span> Incidents
+      </div>
+      <div class="nav-item" data-page="alerts">
+        <span class="nav-icon">🔔</span> Alerts
+        <span id="alert-nav-badge" style="margin-left:auto;background:var(--danger);color:#fff;border-radius:100px;padding:1px 7px;font-size:10px;font-weight:700;display:none">0</span>
+      </div>
+      <div class="nav-item" data-page="devices">
+        <span class="nav-icon">📡</span> Devices
+      </div>
+      <div class="nav-item" data-page="admin">
+        <span class="nav-icon">✍️</span> Post Update
+      </div>
+      <div class="nav-item" data-page="settings">
+        <span class="nav-icon">⚙️</span> Settings
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar" id="user-avatar">A</div>
+        <div class="user-name" id="user-name">Admin</div>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="page-title">Dashboard</div>
+      <div class="topbar-right">
+        <div class="status-pill">
+          <div class="status-dot" id="ws-dot"></div>
+          <span id="ws-label">Connecting…</span>
+        </div>
+        <button class="notif-btn" onclick="navigate('alerts')">
+          🔔 <span class="notif-badge" id="notif-badge" style="display:none">0</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ── Dashboard home ─────────────────────────────────────── -->
+      <div class="page active" id="page-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon blue">🛡️</div>
+            <div>
+              <div class="stat-label">Total Incidents</div>
+              <div class="stat-value" id="s-total">—</div>
+              <div class="stat-sub">All time</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">👁️</div>
+            <div>
+              <div class="stat-label">Today</div>
+              <div class="stat-value" id="s-today">—</div>
+              <div class="stat-sub">Detections today</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon yellow">📡</div>
+            <div>
+              <div class="stat-label">Devices</div>
+              <div class="stat-value" id="s-devices">—</div>
+              <div class="stat-sub">Online</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon red">⚠️</div>
+            <div>
+              <div class="stat-label">Active Alerts</div>
+              <div class="stat-value" id="s-alerts" style="color:var(--danger)">—</div>
+              <div class="stat-sub">Unacknowledged</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Live Camera</span>
+              <div style="display:flex;gap:8px;align-items:center">
+                <span class="live-badge" id="live-badge">LIVE</span>
+              </div>
+            </div>
+            <div class="cam-wrap">
+              <img id="live-feed" src="" alt="Live Feed" onerror="this.src=''"/>
+            </div>
+            <div class="cam-controls">
+              <button class="cam-btn" onclick="toggleCamera()" id="cam-toggle-btn">⏸ Pause</button>
+              <button class="cam-btn danger" onclick="navigate('liveview')">⛶ Fullscreen</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Recent Alerts</span>
+              <a href="#" onclick="navigate('alerts')" style="font-size:12px;color:var(--accent)">View all</a>
+            </div>
+            <div class="alert-feed" id="dash-alert-feed">
+              <div class="empty"><div class="ei">🔔</div>No alerts yet</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Live View ──────────────────────────────────────────── -->
+      <div class="page" id="page-liveview">
+        <div class="card" style="max-width:900px">
+          <div class="card-header">
+            <span class="card-title">📹 Live View</span>
+            <span class="live-badge">LIVE</span>
+          </div>
+          <div class="cam-wrap" style="aspect-ratio:16/9;max-height:520px">
+            <img id="live-feed-full" src="" alt="Live Feed" style="width:100%;height:100%;object-fit:cover"/>
+          </div>
+          <div class="cam-controls">
+            <button class="cam-btn" onclick="toggleCamera()" id="cam-toggle-btn2">⏸ Pause Camera</button>
+            <button class="cam-btn">📸 Capture</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Incidents ──────────────────────────────────────────── -->
+      <div class="page" id="page-incidents">
+        <div class="search-bar">
+          <input type="search" id="incident-search" placeholder="🔍  Search incidents…" oninput="filterIncidents()"/>
+          <select class="filter-select" id="threat-filter" onchange="filterIncidents()">
+            <option value="">All Threats</option>
+            <option value="CRITICAL">Critical</option>
+            <option value="HIGH">High</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="LOW">Low</option>
+          </select>
+        </div>
+        <div class="card">
+          <table class="incidents-table" id="incidents-tbl">
+            <thead>
+              <tr>
+                <th>#</th><th>Time</th><th>Device</th><th>Location</th>
+                <th>Detected</th><th>Threat</th><th>Ack</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="incidents-tbody">
+              <tr><td colspan="7"><div class="empty"><div class="ei">📋</div>Loading…</div></td></tr>
+            </tbody>
+          </table>
+          <div class="pagination" id="incidents-pagination" style="display:none">
+            <button id="pg-prev" onclick="changePage(-1)">← Prev</button>
+            <span id="pg-info" style="font-size:13px;color:var(--muted)"></span>
+            <button id="pg-next" onclick="changePage(1)">Next →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Alerts ─────────────────────────────────────────────── -->
+      <div class="page" id="page-alerts">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🔔 Alert Feed</span>
+            <span id="alert-count-badge" style="background:var(--danger);color:#fff;border-radius:100px;padding:2px 10px;font-size:11px;font-weight:700">0</span>
+          </div>
+          <div class="alert-feed" id="alert-feed-full" style="max-height:600px">
+            <div class="empty"><div class="ei">🔔</div>No alerts yet</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Devices ────────────────────────────────────────────── -->
+      <div class="page" id="page-devices">
+        <div class="devices-grid" id="devices-grid">
+          <div class="empty"><div class="ei">📡</div>Loading…</div>
+        </div>
+      </div>
+
+      <!-- ── Admin / Post Update ────────────────────────────────── -->
+      <div class="page" id="page-admin">
+        <div class="happening-form">
+          <h3>Post a Security Update</h3>
+          <div class="field">
+            <label>Title</label>
+            <input type="text" id="hap-title" placeholder="e.g. New camera deployed at Gate B"/>
+          </div>
+          <div class="field">
+            <label>Body</label>
+            <textarea id="hap-body" placeholder="Describe the update or incident…"></textarea>
+          </div>
+          <div class="field">
+            <label>Image (optional)</label>
+            <input type="file" id="hap-image" accept="image/*"/>
+          </div>
+          <button class="btn btn-primary" onclick="postHappening()">Publish Update</button>
+        </div>
+        <div class="happenings-list" id="happenings-list">
+          <div class="empty"><div class="ei">✍️</div>No updates posted yet</div>
+        </div>
+      </div>
+
+      <!-- ── Settings ───────────────────────────────────────────── -->
+      <div class="page" id="page-settings">
+        <div class="card" style="max-width:520px">
+          <div class="card-header"><span class="card-title">⚙️ Settings</span></div>
+          <div class="card-body">
+            <div style="display:flex;flex-direction:column;gap:0">
+              <div onclick="showToast('Configure via server .env file','warning')" style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:14px">
+                <span>👤 Profile</span><span style="color:var(--muted);font-size:18px">›</span>
+              </div>
+              <div onclick="showToast('Notification settings: edit .env','warning')" style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:14px">
+                <span>🔔 Notifications</span><span style="color:var(--muted);font-size:18px">›</span>
+              </div>
+              <div onclick="navigate('devices')" style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:14px">
+                <span>📡 Devices</span><span style="color:var(--muted);font-size:18px">›</span>
+              </div>
+              <div onclick="showToast('Storage: snapshots in static/snapshots','warning')" style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:14px">
+                <span>💾 Storage</span><span style="color:var(--muted);font-size:18px">›</span>
+              </div>
+              <div style="padding:14px 0;font-size:14px;color:var(--muted)">
+                <span>ℹ️ Vigirix v1.0 — Sustainable AI Surveillance</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ── Incident Modal ─────────────────────────────────────────────── -->
+<div class="modal-overlay" id="incident-modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Incident Details</span>
+      <button class="modal-close" onclick="document.getElementById('incident-modal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<!-- ── Toast container ────────────────────────────────────────────── -->
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+const SERVER = window.location.origin.replace(':3000','').replace(':5500','') // same origin or configure
+  .replace('file://','http://localhost:9000');
+// In production the dashboard is served from the central server, so same origin.
+// For dev (opening file directly), point to server:
+const API = (location.protocol === 'file:') ? 'http://localhost:8002' : '';
+
+let TOKEN = localStorage.getItem('vx_token') || '';
+let ws = null;
+let alertCount = 0;
+let allIncidents = [];
+let cameraOff = false;
+const EDGE_URL = localStorage.getItem('vx_edge') || 'http://localhost:8000';
+
+// ── Auth ──────────────────────────────────────────────────────────
+async function doLogin() {
+  const u = document.getElementById('inp-user').value.trim();
+  const p = document.getElementById('inp-pass').value;
+  const err = document.getElementById('login-err');
+  err.textContent = '';
+  try {
+    const r = await fetch(`${API}/api/auth/login`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({username:u, password:p})
+    });
+    if (!r.ok) { err.textContent = 'Invalid credentials'; return; }
+    const d = await r.json();
+    TOKEN = d.token;
+    localStorage.setItem('vx_token', TOKEN);
+    bootApp(u);
+  } catch(e) {
+    err.textContent = 'Cannot reach server — check it is running';
+  }
+}
+
+function doLogout() {
+  localStorage.removeItem('vx_token');
+  TOKEN = '';
+  if (ws) ws.close();
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+document.getElementById('inp-pass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+// ── Boot ──────────────────────────────────────────────────────────
+function bootApp(username) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'grid';
+  const av = username[0].toUpperCase();
+  document.getElementById('user-avatar').textContent = av;
+  document.getElementById('user-name').textContent = username;
+
+  // Set live feed src
+  document.getElementById('live-feed').src = `${EDGE_URL}/video_feed`;
+  document.getElementById('live-feed-full').src = `${EDGE_URL}/video_feed`;
+
+  loadStats();
+  loadIncidents();
+  loadDevices();
+  loadHappenings();
+  connectWS();
+}
+
+if (TOKEN) { bootApp('Admin'); }
+
+// ── Navigation ────────────────────────────────────────────────────
+const PAGE_TITLES = {
+  dashboard:'Dashboard', liveview:'Live View', incidents:'Incidents',
+  alerts:'Alerts', devices:'Devices', admin:'Post Update', settings:'Settings'
+};
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page)?.classList.add('active');
+  document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
+  document.getElementById('page-title').textContent = PAGE_TITLES[page] || page;
+  if (page === 'incidents') loadIncidents();
+  if (page === 'devices')   loadDevices();
+  if (page === 'admin')     loadHappenings();
+  if (page === 'alerts')    { alertCount = 0; updateAlertBadge(); }
+}
+document.querySelectorAll('.nav-item').forEach(el => {
+  el.addEventListener('click', () => navigate(el.dataset.page));
+});
+
+// ── Stats ─────────────────────────────────────────────────────────
+async function loadStats() {
+  try {
+    const r = await apiFetch('/api/stats');
+    const d = await r.json();
+    document.getElementById('s-total').textContent   = d.total_events ?? '—';
+    document.getElementById('s-today').textContent   = d.today_events ?? '—';
+    document.getElementById('s-devices').textContent = d.devices_online ?? '—';
+    document.getElementById('s-alerts').textContent  = d.active_alerts ?? '—';
+  } catch(e) {}
+}
+
+// ── Incidents ─────────────────────────────────────────────────────
+const PAGE_SIZE = 25;
+let incidentPage = 0;
+let incidentTotal = 0;
+
+async function loadIncidents(page) {
+  if (page !== undefined) incidentPage = page;
+  const offset = incidentPage * PAGE_SIZE;
+  const threat = document.getElementById('threat-filter').value;
+  const q      = document.getElementById('incident-search').value.trim();
+  let url = `/api/events?limit=${PAGE_SIZE}&offset=${offset}`;
+  if (threat) url += `&threat=${threat}`;
+  try {
+    const r = await apiFetch(url);
+    const data = await r.json();
+    allIncidents     = data.items ?? data;
+    incidentTotal    = data.total ?? allIncidents.length;
+    renderIncidents(allIncidents, q);
+    renderPagination();
+  } catch(e) {}
+}
+
+function renderPagination() {
+  const pages = Math.ceil(incidentTotal / PAGE_SIZE);
+  const pg    = document.getElementById('incidents-pagination');
+  const info  = document.getElementById('pg-info');
+  const prev  = document.getElementById('pg-prev');
+  const next  = document.getElementById('pg-next');
+  if (pages <= 1) { pg.style.display = 'none'; return; }
+  pg.style.display = 'flex';
+  info.textContent = `Page ${incidentPage + 1} of ${pages} (${incidentTotal} total)`;
+  prev.disabled = incidentPage === 0;
+  next.disabled = incidentPage >= pages - 1;
+}
+
+function changePage(dir) { loadIncidents(incidentPage + dir); }
+
+function filterIncidents() {
+  incidentPage = 0;
+  loadIncidents();
+}
+
+function renderIncidents(rows) {
+  const tbody = document.getElementById('incidents-tbody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="ei">📋</div>No incidents found</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.map(ev => {
+    const labels = ev.detections.map(d=>d.label).join(', ') || '—';
+    const t  = new Date(ev.timestamp + 'Z').toLocaleString();
+    const ack = ev.acknowledged ? '✅' : '<button class="btn btn-sm" onclick="ackEvent('+ev.id+',event)" style="background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0">Ack</button>';
+    return `<tr onclick="showIncident(${ev.id})">
+      <td style="color:var(--muted);font-size:12px">#${ev.id}</td>
+      <td>${t}</td>
+      <td>${ev.device_id}</td>
+      <td>${ev.location || '—'}</td>
+      <td>${labels}</td>
+      <td><span class="threat-badge threat-${ev.threat_level}">${ev.threat_level}</span></td>
+      <td onclick="event.stopPropagation()">${ack}</td>
+      <td onclick="event.stopPropagation()"><button class="btn btn-sm btn-danger" onclick="deleteIncident(${ev.id},event)" title="Delete">🗑</button></td>
+    </tr>`;
+  }).join('');
+}
+
+async function ackEvent(id, e) {
+  e.stopPropagation();
+  await apiFetch(`/api/events/${id}/acknowledge`, {method:'PATCH'});
+  loadIncidents(); loadStats();
+}
+
+async function deleteIncident(id, e) {
+  e.stopPropagation();
+  if (!confirm('Delete this incident permanently?')) return;
+  const r = await apiFetch(`/api/events/${id}`, {method:'DELETE'});
+  if (r.ok) { showToast('Incident deleted','success'); loadIncidents(); loadStats(); }
+  else showToast('Delete failed','danger');
+}
+
+async function showIncident(id) {
+  const r = await apiFetch(`/api/events/${id}`);
+  const ev = await r.json();
+  const labels = ev.detections.map(d=>`${d.label} (${Math.round(d.confidence*100)}%)`).join(', ') || '—';
+  const t = new Date(ev.timestamp + 'Z').toLocaleString();
+  document.getElementById('modal-body').innerHTML = `
+    ${ev.snapshot_path ? `<img src="${API}/static/snapshots/${ev.snapshot_path.split('/').pop()}" class="modal-snap" alt="Snapshot"/>` : ''}
+    <div class="detail-row"><span class="detail-key">Time</span><span class="detail-val">${t}</span></div>
+    <div class="detail-row"><span class="detail-key">Device</span><span class="detail-val">${ev.device_id}</span></div>
+    <div class="detail-row"><span class="detail-key">Location</span><span class="detail-val">${ev.location || '—'}</span></div>
+    <div class="detail-row"><span class="detail-key">Detected</span><span class="detail-val">${labels}</span></div>
+    <div class="detail-row"><span class="detail-key">Threat</span><span class="detail-val"><span class="threat-badge threat-${ev.threat_level}">${ev.threat_level}</span></span></div>
+    <div class="detail-row"><span class="detail-key">Acknowledged</span><span class="detail-val">${ev.acknowledged ? 'Yes' : 'No'}</span></div>
+  `;
+  document.getElementById('incident-modal').classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('incident-modal'))
+    document.getElementById('incident-modal').classList.remove('open');
+}
+
+// ── Alert feed ────────────────────────────────────────────────────
+async function deleteAlert(id, el) {
+  el.stopPropagation();
+  if (!confirm('Delete this alert?')) return;
+  try {
+    const r = await apiFetch(`/api/events/${id}`, {method:'DELETE'});
+    if (r.ok) {
+      document.querySelectorAll(`.alert-item[data-id="${id}"]`).forEach(n => n.remove());
+      showToast('Alert deleted','success');
+    }
+  } catch(e) { showToast('Delete failed','danger'); }
+}
+
+function addAlertItem(ev, feeds) {
+  const t      = new Date(ev.timestamp + (ev.timestamp.includes('Z')?'':'Z')).toLocaleTimeString();
+  const labels = (ev.detections||[]).map(d=>d.label).join(', ') || 'Detection';
+  const snap   = ev.snapshot_path ? `<img class="alert-thumb" src="${API}/static/snapshots/${ev.snapshot_path.split('/').pop()}" onerror="this.style.display='none'"/>` : '<div class="alert-thumb" style="background:#e5e7eb"></div>';
+  const html = `<div class="alert-item" data-id="${ev.id}" onclick="showIncident(${ev.id})">
+    ${snap}
+    <div class="alert-info">
+      <div class="alert-time">${t}</div>
+      <div class="alert-title">${labels.charAt(0).toUpperCase()+labels.slice(1)} detected</div>
+      <div class="alert-camera">${ev.device_id} · ${ev.location||''}</div>
+    </div>
+    <span class="threat-badge threat-${ev.threat_level}">${ev.threat_level}</span>
+    <button onclick="deleteAlert(${ev.id},event)" style="margin-left:8px;background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:4px;border-radius:4px;flex-shrink:0" title="Delete alert">🗑</button>
+  </div>`;
+
+  feeds.forEach(feedId => {
+    const feed = document.getElementById(feedId);
+    feed.querySelector('.empty')?.remove();
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    feed.insertBefore(tmp.firstChild, feed.firstChild);
+    while(feed.children.length > 25) feed.removeChild(feed.lastChild);
+  });
+}
+
+// ── Devices ───────────────────────────────────────────────────────
+async function loadDevices() {
+  try {
+    const r = await apiFetch('/api/devices');
+    const devs = await r.json();
+    const grid = document.getElementById('devices-grid');
+    if (!devs.length) { grid.innerHTML = '<div class="empty"><div class="ei">📡</div>No devices registered yet</div>'; return; }
+    grid.innerHTML = devs.map(d => {
+      const seen = d.last_seen ? new Date(d.last_seen+'Z').toLocaleString() : '—';
+      const online = d.status === 'active';
+      return `<div class="device-card">
+        <div class="d-header">
+          <span class="d-id">📡 ${d.device_id}</span>
+          <div class="device-status ${online?'active':'offline'}"></div>
+        </div>
+        <div class="d-loc">📍 ${d.location||'Unknown location'}</div>
+        <div class="d-seen">Last seen: ${seen}</div>
+      </div>`;
+    }).join('');
+  } catch(e) {}
+}
+
+// ── Happenings ────────────────────────────────────────────────────
+async function loadHappenings() {
+  try {
+    const r = await fetch(`${API}/api/happenings`);
+    const haps = await r.json();
+    const list = document.getElementById('happenings-list');
+    if (!haps.length) { list.innerHTML = '<div class="empty"><div class="ei">✍️</div>No updates yet</div>'; return; }
+    list.innerHTML = haps.map(h => {
+      const t = new Date(h.timestamp+'Z').toLocaleString();
+      const img = h.image_path ? `<img src="${API}/static/uploads/${h.image_path.split('/').pop()}" onerror="this.style.display='none'"/>` : '';
+      return `<div class="happening-card">
+        ${img}
+        <div class="happening-body">
+          <h4>${h.title}</h4>
+          <p>${h.body}</p>
+          <div class="happening-meta">${t} · <a href="#" onclick="deleteHappening(${h.id})" style="color:var(--danger)">Delete</a></div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {}
+}
+
+async function postHappening() {
+  const title = document.getElementById('hap-title').value.trim();
+  const body  = document.getElementById('hap-body').value.trim();
+  const img   = document.getElementById('hap-image').files[0];
+  if (!title || !body) { showToast('Title and body required','danger'); return; }
+  const fd = new FormData();
+  fd.append('title', title); fd.append('body', body);
+  if (img) fd.append('image', img);
+  try {
+    const r = await apiFetch('/api/happenings', {method:'POST', body:fd});
+    if (r.ok) {
+      showToast('Update published ✅','success');
+      document.getElementById('hap-title').value = '';
+      document.getElementById('hap-body').value  = '';
+      document.getElementById('hap-image').value = '';
+      loadHappenings();
+    }
+  } catch(e) { showToast('Failed to post','danger'); }
+}
+
+async function deleteHappening(id) {
+  await apiFetch(`/api/happenings/${id}`, {method:'DELETE'});
+  loadHappenings();
+}
+
+// ── Camera toggle ─────────────────────────────────────────────────
+async function toggleCamera() {
+  const endpoint = cameraOff ? '/api/camera/on' : '/api/camera/off';
+  try { await fetch(`${EDGE_URL}${endpoint}`, {method:'POST'}); } catch(e){}
+  cameraOff = !cameraOff;
+  const label = cameraOff ? '▶ Resume' : '⏸ Pause';
+  document.getElementById('cam-toggle-btn').textContent  = label;
+  document.getElementById('cam-toggle-btn2').textContent = label + ' Camera';
+  if (cameraOff) {
+    document.getElementById('live-feed').src = '';
+    document.getElementById('live-feed-full').src = '';
+  } else {
+    document.getElementById('live-feed').src = `${EDGE_URL}/video_feed`;
+    document.getElementById('live-feed-full').src = `${EDGE_URL}/video_feed`;
+  }
+}
+
+// ── WebSocket ─────────────────────────────────────────────────────
+function connectWS() {
+  const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+  const base  = API.replace('https://','').replace('http://','') || location.host;
+  ws = new WebSocket(`${proto}://${base}/ws`);
+
+  ws.onopen = () => {
+    ws.send(JSON.stringify({ token: TOKEN }));
+    document.getElementById('ws-dot').className   = 'status-dot live';
+    document.getElementById('ws-label').textContent = 'Live';
+  };
+
+  ws.onmessage = e => {
+    const msg = JSON.parse(e.data);
+    if (msg.type === 'stats') {
+      document.getElementById('s-total').textContent   = msg.data.total_events ?? '—';
+      document.getElementById('s-today').textContent   = msg.data.today_events ?? '—';
+      document.getElementById('s-devices').textContent = msg.data.devices_online ?? '—';
+      document.getElementById('s-alerts').textContent  = msg.data.active_alerts ?? '—';
+    }
+    if (msg.type === 'detection') {
+      const ev = msg.event;
+      addAlertItem(ev, ['dash-alert-feed','alert-feed-full']);
+      alertCount++;
+      updateAlertBadge();
+      if (ev.threat_level === 'CRITICAL') showToast(`🚨 CRITICAL — ${ev.detections.map(d=>d.label).join(', ')} at ${ev.location}`,'danger');
+      else if (ev.threat_level === 'HIGH') showToast(`⚠️ HIGH — ${ev.detections.map(d=>d.label).join(', ')} at ${ev.location}`,'warning');
+      if (Notification.permission === 'granted') {
+        new Notification('Vigirix Alert', {body:`${ev.threat_level}: ${ev.detections.map(d=>d.label).join(', ')} at ${ev.location || ev.device_id}`});
+      }
+    }
+    if (msg.type === 'happening') loadHappenings();
+  };
+
+  ws.onclose = () => {
+    document.getElementById('ws-dot').className    = 'status-dot';
+    document.getElementById('ws-label').textContent = 'Reconnecting…';
+    setTimeout(connectWS, 3000);
+  };
+  ws.onerror = () => ws.close();
+}
+
+function updateAlertBadge() {
+  const b  = document.getElementById('notif-badge');
+  const nb = document.getElementById('alert-nav-badge');
+  const ac = document.getElementById('alert-count-badge');
+  [b, nb].forEach(el => {
+    el.style.display = alertCount ? 'flex' : 'none';
+    el.textContent   = alertCount;
+  });
+  if (ac) ac.textContent = alertCount;
+}
+
+// ── Helpers ───────────────────────────────────────────────────────
+function apiFetch(path, opts={}) {
+  return fetch(`${API}${path}`, {
+    ...opts,
+    headers: {...(opts.headers||{}), ...(opts.body instanceof FormData ? {} : {'Content-Type':'application/json'}), 'Authorization':`Bearer ${TOKEN}`}
+  });
+}
+
+function showToast(msg, type='success') {
+  const wrap = document.getElementById('toast-wrap');
+  const t    = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  wrap.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+if ('Notification' in window && Notification.permission === 'default') {
+  Notification.requestPermission();
+}
+
+// Load recent alerts into feed on boot
+async function loadRecentAlerts() {
+  try {
+    const r = await apiFetch('/api/events?limit=10');
+    const evs = await r.json();
+    evs.slice().reverse().forEach(ev => addAlertItem(ev, ['dash-alert-feed','alert-feed-full']));
+  } catch(e) {}
+}
+if (TOKEN) loadRecentAlerts();
+</script>
+</body>
+</html>
