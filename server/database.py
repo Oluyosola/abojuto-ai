@@ -144,6 +144,12 @@ async def delete_event(event_id: int):
         await db.commit()
 
 
+async def delete_all_events():
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute("DELETE FROM events")
+        await db.commit()
+
+
 async def get_stats() -> dict:
     async with aiosqlite.connect(DB_PATH) as db:
         total  = (await (await db.execute("SELECT COUNT(*) FROM events")).fetchone())[0]

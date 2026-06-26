@@ -210,6 +210,15 @@ async def ack_event(event_id: int, _=Depends(require_auth)):
     return {"acknowledged": True}
 
 
+@app.delete("/api/events")
+async def clear_all_events(_=Depends(require_auth)):
+    await db.delete_all_events()
+    stats = await db.get_stats()
+    await hub.broadcast({"type": "stats", "data": stats})
+    await hub.broadcast({"type": "cleared"})
+    return {"cleared": True}
+
+
 @app.delete("/api/events/{event_id}")
 async def delete_event(event_id: int, _=Depends(require_auth)):
     ev = await db.get_event(event_id)
