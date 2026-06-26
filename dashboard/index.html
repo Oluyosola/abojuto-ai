@@ -456,8 +456,13 @@ input,textarea,select{font-family:var(--font)}
                 <span class="live-badge" id="live-badge">LIVE</span>
               </div>
             </div>
-            <div class="cam-wrap">
-              <img id="live-feed" src="" alt="Live Feed" onerror="this.src=''"/>
+            <div class="cam-wrap" style="position:relative">
+              <img id="live-feed" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:block" onerror="retryFeed(this)" onload="feedOnline(this)"/>
+              <div id="cam-offline" style="display:flex;position:absolute;inset:0;background:#0f1f1e;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:#7fb5af">
+                <div style="font-size:32px">📷</div>
+                <div style="font-size:13px;font-weight:600">Camera offline</div>
+                <div style="font-size:11px;opacity:0.6">Edge service not reachable at <span id="edge-url-label"></span></div>
+              </div>
             </div>
             <div class="cam-controls">
               <button class="cam-btn" onclick="toggleCamera()" id="cam-toggle-btn">⏸ Pause</button>
@@ -485,7 +490,7 @@ input,textarea,select{font-family:var(--font)}
             <span class="live-badge">LIVE</span>
           </div>
           <div class="cam-wrap" style="aspect-ratio:16/9;max-height:520px">
-            <img id="live-feed-full" src="" alt="Live Feed" style="width:100%;height:100%;object-fit:cover"/>
+            <img id="live-feed-full" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:block" onerror="retryFeed(this)" onload="feedOnline(this)"/>
           </div>
           <div class="cam-controls">
             <button class="cam-btn" onclick="toggleCamera()" id="cam-toggle-btn2">⏸ Pause Camera</button>
@@ -507,6 +512,9 @@ input,textarea,select{font-family:var(--font)}
           </select>
         </div>
         <div class="card">
+          <div style="display:flex;justify-content:flex-end;padding:10px 18px 0">
+            <button class="btn btn-danger btn-sm" onclick="clearAll()">🗑 Clear All</button>
+          </div>
           <table class="incidents-table" id="incidents-tbl">
             <thead>
               <tr>
@@ -531,7 +539,10 @@ input,textarea,select{font-family:var(--font)}
         <div class="card">
           <div class="card-header">
             <span class="card-title">🔔 Alert Feed</span>
-            <span id="alert-count-badge" style="background:var(--danger);color:#fff;border-radius:100px;padding:2px 10px;font-size:11px;font-weight:700">0</span>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span id="alert-count-badge" style="background:var(--danger);color:#fff;border-radius:100px;padding:2px 10px;font-size:11px;font-weight:700">0</span>
+              <button class="btn btn-danger btn-sm" onclick="clearAll()">🗑 Clear All</button>
+            </div>
           </div>
           <div class="alert-feed" id="alert-feed-full" style="max-height:600px">
             <div class="empty"><div class="ei">🔔</div>No alerts yet</div>
@@ -571,27 +582,98 @@ input,textarea,select{font-family:var(--font)}
 
       <!-- ── Settings ───────────────────────────────────────────── -->
       <div class="page" id="page-settings">
-        <div class="card" style="max-width:520px">
-          <div class="card-header"><span class="card-title">⚙️ Settings</span></div>
-          <div class="card-body">
-            <div style="display:flex;flex-direction:column;gap:0">
-              <div onclick="showToast('Configure via server .env file','warning')" style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:14px">
-                <span>👤 Profile</span><span style="color:var(--muted);font-size:18px">›</span>
+        <div style="display:flex;flex-direction:column;gap:20px;max-width:700px">
+
+          <!-- Energy Monitor card -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">⚡ Energy Monitor</span>
+              <span id="energy-status" style="font-size:11px;padding:3px 8px;border-radius:10px;background:var(--border);color:var(--muted)">loading…</span>
+            </div>
+            <div class="card-body">
+              <!-- big numbers row -->
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+                <div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center">
+                  <div style="font-size:22px;font-weight:700;color:var(--accent)" id="e-wh">—</div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:2px">Wh consumed</div>
+                </div>
+                <div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center">
+                  <div style="font-size:22px;font-weight:700;color:#4caf50" id="e-co2">—</div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:2px">g CO₂ equiv.</div>
+                </div>
+                <div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center">
+                  <div style="font-size:22px;font-weight:700;color:#ff9800" id="e-saved">—</div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:2px">frames saved by motion filter</div>
+                </div>
               </div>
-              <div onclick="showToast('Notification settings: edit .env','warning')" style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:14px">
-                <span>🔔 Notifications</span><span style="color:var(--muted);font-size:18px">›</span>
+
+              <!-- breakdown row -->
+              <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px">
+                <div style="font-size:13px;display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+                    <span style="color:var(--muted)">Session time</span><span id="e-duration" style="font-weight:600">—</span>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+                    <span style="color:var(--muted)">Frames read</span><span id="e-frames" style="font-weight:600">—</span>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+                    <span style="color:var(--muted)">AI inferences run</span><span id="e-infer" style="font-weight:600">—</span>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;padding:6px 0">
+                    <span style="color:var(--muted)">Alerts fired</span><span id="e-alerts" style="font-weight:600">—</span>
+                  </div>
+                </div>
+                <div style="font-size:13px;display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+                    <span style="color:var(--muted)">CPU energy</span><span id="e-cpu" style="font-weight:600">—</span>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+                    <span style="color:var(--muted)">GPU energy</span><span id="e-gpu" style="font-weight:600">—</span>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+                    <span style="color:var(--muted)">RAM energy</span><span id="e-ram" style="font-weight:600">—</span>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;padding:6px 0">
+                    <span style="color:var(--muted)">Motion filter</span><span id="e-filter" style="font-weight:600">—</span>
+                  </div>
+                </div>
               </div>
-              <div onclick="navigate('devices')" style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:14px">
-                <span>📡 Devices</span><span style="color:var(--muted);font-size:18px">›</span>
-              </div>
-              <div onclick="showToast('Storage: snapshots in static/snapshots','warning')" style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:14px">
-                <span>💾 Storage</span><span style="color:var(--muted);font-size:18px">›</span>
-              </div>
-              <div style="padding:14px 0;font-size:14px;color:var(--muted)">
-                <span>ℹ️ Vigirix v1.0 — Sustainable AI Surveillance</span>
+
+              <!-- savings bar -->
+              <div style="background:var(--bg);border-radius:8px;padding:12px">
+                <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Motion filter savings — frames skipped vs total</div>
+                <div style="background:var(--border);border-radius:4px;height:8px;overflow:hidden">
+                  <div id="e-bar" style="height:100%;background:#4caf50;border-radius:4px;width:0%;transition:width 0.6s"></div>
+                </div>
+                <div style="font-size:11px;color:var(--muted);margin-top:4px" id="e-bar-label">0% of frames skipped (AI not invoked)</div>
               </div>
             </div>
           </div>
+
+          <!-- General settings card -->
+          <div class="card">
+            <div class="card-header"><span class="card-title">⚙️ Settings</span></div>
+            <div class="card-body">
+              <div style="display:flex;flex-direction:column;gap:0">
+                <div onclick="showToast('Configure via server .env file','warning')" style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:14px">
+                  <span>👤 Profile</span><span style="color:var(--muted);font-size:18px">›</span>
+                </div>
+                <div onclick="showToast('Notification settings: edit .env','warning')" style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:14px">
+                  <span>🔔 Notifications</span><span style="color:var(--muted);font-size:18px">›</span>
+                </div>
+                <div onclick="navigate('devices')" style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:14px">
+                  <span>📡 Devices</span><span style="color:var(--muted);font-size:18px">›</span>
+                </div>
+                <div onclick="showToast('Storage: snapshots in static/snapshots','warning')" style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:14px">
+                  <span>💾 Storage</span><span style="color:var(--muted);font-size:18px">›</span>
+                </div>
+                <div style="padding:14px 0;font-size:14px;color:var(--muted)">
+                  <span>ℹ️ Vigirix v1.0 — Sustainable AI Surveillance</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -625,6 +707,9 @@ let ws = null;
 let alertCount = 0;
 let allIncidents = [];
 let cameraOff = false;
+const PAGE_SIZE = 25;
+let incidentPage = 0;
+let incidentTotal = 0;
 const EDGE_URL = localStorage.getItem('vx_edge') || 'http://localhost:8000';
 
 // ── Auth ──────────────────────────────────────────────────────────
@@ -660,6 +745,45 @@ document.getElementById('inp-pass').addEventListener('keydown', e => {
   if (e.key === 'Enter') doLogin();
 });
 
+// ── Live feed helpers ─────────────────────────────────────────────
+function setFeedSrc() {
+  const url = `${EDGE_URL}/video_feed`;
+  const lf  = document.getElementById('live-feed');
+  const lff = document.getElementById('live-feed-full');
+  const lbl = document.getElementById('edge-url-label');
+  if (lbl) lbl.textContent = EDGE_URL;
+  // overlay stays visible until onload confirms stream is live
+  if (lf)  lf.src  = url;
+  if (lff) lff.src = url;
+}
+
+function feedOnline(img) {
+  // called by onload — stream is live, hide the offline overlay
+  const off = document.getElementById('cam-offline');
+  if (off) off.style.display = 'none';
+}
+
+function retryFeed(img) {
+  if (cameraOff) return;
+  const off = document.getElementById('cam-offline');
+  if (off) off.style.display = 'flex';   // keep overlay up while retrying
+  setTimeout(() => {
+    if (cameraOff) return;
+    img.src = `${EDGE_URL}/video_feed?t=${Date.now()}`;
+    // overlay stays until onload fires (feedOnline)
+  }, 4000);
+}
+
+// Keep the MJPEG stream alive — re-stamp src every 30 s so browser doesn't drop it
+setInterval(() => {
+  if (cameraOff) return;
+  ['live-feed', 'live-feed-full'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el || !el.src.includes('video_feed')) return;
+    el.src = `${EDGE_URL}/video_feed?t=${Date.now()}`;
+  });
+}, 30000);
+
 // ── Boot ──────────────────────────────────────────────────────────
 function bootApp(username) {
   document.getElementById('login-screen').style.display = 'none';
@@ -668,9 +792,7 @@ function bootApp(username) {
   document.getElementById('user-avatar').textContent = av;
   document.getElementById('user-name').textContent = username;
 
-  // Set live feed src
-  document.getElementById('live-feed').src = `${EDGE_URL}/video_feed`;
-  document.getElementById('live-feed-full').src = `${EDGE_URL}/video_feed`;
+  setFeedSrc();
 
   loadStats();
   loadIncidents();
@@ -687,6 +809,7 @@ const PAGE_TITLES = {
   alerts:'Alerts', devices:'Devices', admin:'Post Update', settings:'Settings'
 };
 function navigate(page) {
+  clearTimeout(_energyTimer);
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + page)?.classList.add('active');
@@ -696,6 +819,7 @@ function navigate(page) {
   if (page === 'devices')   loadDevices();
   if (page === 'admin')     loadHappenings();
   if (page === 'alerts')    { alertCount = 0; updateAlertBadge(); }
+  if (page === 'settings')  loadEnergy();
 }
 document.querySelectorAll('.nav-item').forEach(el => {
   el.addEventListener('click', () => navigate(el.dataset.page));
@@ -714,10 +838,6 @@ async function loadStats() {
 }
 
 // ── Incidents ─────────────────────────────────────────────────────
-const PAGE_SIZE = 25;
-let incidentPage = 0;
-let incidentTotal = 0;
-
 async function loadIncidents(page) {
   if (page !== undefined) incidentPage = page;
   const offset = incidentPage * PAGE_SIZE;
@@ -790,6 +910,24 @@ async function deleteIncident(id, e) {
   const r = await apiFetch(`/api/events/${id}`, {method:'DELETE'});
   if (r.ok) { showToast('Incident deleted','success'); loadIncidents(); loadStats(); }
   else showToast('Delete failed','danger');
+}
+
+async function clearAll() {
+  if (!confirm('Clear ALL incidents and alerts? This cannot be undone.')) return;
+  const r = await apiFetch('/api/events', {method:'DELETE'});
+  if (r.ok) {
+    showToast('All incidents cleared','success');
+    loadIncidents();
+    loadStats();
+    ['dash-alert-feed','alert-feed-full'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = '<div class="empty"><div class="ei">🔔</div>No alerts yet</div>';
+    });
+    alertCount = 0;
+    updateAlertBadge();
+  } else {
+    showToast('Clear failed','danger');
+  }
 }
 
 async function showIncident(id) {
@@ -930,11 +1068,62 @@ async function toggleCamera() {
   document.getElementById('cam-toggle-btn').textContent  = label;
   document.getElementById('cam-toggle-btn2').textContent = label + ' Camera';
   if (cameraOff) {
-    document.getElementById('live-feed').src = '';
+    document.getElementById('live-feed').src      = '';
     document.getElementById('live-feed-full').src = '';
   } else {
-    document.getElementById('live-feed').src = `${EDGE_URL}/video_feed`;
-    document.getElementById('live-feed-full').src = `${EDGE_URL}/video_feed`;
+    setFeedSrc();
+  }
+}
+
+// ── Energy monitor ────────────────────────────────────────────────
+let _energyTimer = null;
+
+async function loadEnergy() {
+  const status = document.getElementById('energy-status');
+  try {
+    const r = await fetch(`${EDGE_URL}/api/energy`);
+    if (!r.ok) throw new Error(r.status);
+    const d = await r.json();
+
+    if (status) {
+      status.textContent = d.tracker_active ? 'Tracking live' : 'Edge offline';
+      status.style.background = d.tracker_active ? '#1a3a2a' : 'var(--border)';
+      status.style.color = d.tracker_active ? '#4caf50' : 'var(--muted)';
+    }
+
+    // big numbers
+    const wh = d.energy_wh || 0;
+    document.getElementById('e-wh').textContent   = wh < 0.001
+      ? (wh * 1000).toFixed(4) + ' mWh' : wh.toFixed(4) + ' Wh';
+    document.getElementById('e-co2').textContent  = (d.co2_grams || 0).toFixed(4) + ' g';
+    document.getElementById('e-saved').textContent = d.frames_skipped_motion.toLocaleString();
+
+    // breakdown
+    const fmt = v => v < 0.000001 ? '<0.000001' : v.toFixed(7);
+    document.getElementById('e-duration').textContent =
+      d.session_seconds < 60
+        ? d.session_seconds + 's'
+        : Math.floor(d.session_seconds/60) + 'm ' + (d.session_seconds%60|0) + 's';
+    document.getElementById('e-frames').textContent  = d.frames_read.toLocaleString();
+    document.getElementById('e-infer').textContent   = d.inferences_run.toLocaleString();
+    document.getElementById('e-alerts').textContent  = d.alerts_fired;
+    document.getElementById('e-cpu').textContent     = fmt(d.cpu_kwh) + ' kWh';
+    document.getElementById('e-gpu').textContent     = fmt(d.gpu_kwh) + ' kWh';
+    document.getElementById('e-ram').textContent     = fmt(d.ram_kwh) + ' kWh';
+    document.getElementById('e-filter').textContent  = d.motion_filter_savings_pct + '% saved';
+
+    // savings bar
+    const pct = d.motion_filter_savings_pct || 0;
+    document.getElementById('e-bar').style.width        = pct + '%';
+    document.getElementById('e-bar-label').textContent  =
+      pct + '% of frames skipped — AI inference not invoked';
+
+  } catch(e) {
+    if (status) { status.textContent = 'Edge offline'; }
+  }
+  // auto-refresh every 3 s, but only while settings page is active
+  if (document.getElementById('page-settings')?.classList.contains('active')) {
+    _energyTimer = setTimeout(loadEnergy, 3000);
   }
 }
 
@@ -970,6 +1159,14 @@ function connectWS() {
       }
     }
     if (msg.type === 'happening') loadHappenings();
+    if (msg.type === 'cleared') {
+      loadIncidents(); loadStats();
+      ['dash-alert-feed','alert-feed-full'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '<div class="empty"><div class="ei">🔔</div>No alerts yet</div>';
+      });
+      alertCount = 0; updateAlertBadge();
+    }
   };
 
   ws.onclose = () => {
@@ -1015,9 +1212,10 @@ if ('Notification' in window && Notification.permission === 'default') {
 // Load recent alerts into feed on boot
 async function loadRecentAlerts() {
   try {
-    const r = await apiFetch('/api/events?limit=10');
-    const evs = await r.json();
-    evs.slice().reverse().forEach(ev => addAlertItem(ev, ['dash-alert-feed','alert-feed-full']));
+    const r = await apiFetch('/api/events?limit=20');
+    const data = await r.json();
+    const items = data.items ?? data;
+    items.slice().reverse().forEach(ev => addAlertItem(ev, ['dash-alert-feed','alert-feed-full']));
   } catch(e) {}
 }
 if (TOKEN) loadRecentAlerts();

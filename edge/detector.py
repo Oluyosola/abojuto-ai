@@ -18,6 +18,12 @@ from dotenv import load_dotenv
 
 from loitering import LoiteringTracker
 
+try:
+    from codecarbon import EmissionsTracker as _ETracker
+    _CODECARBON_OK = True
+except ImportError:
+    _CODECARBON_OK = False
+
 load_dotenv()
 logger = logging.getLogger("vigirix.detector")
 
@@ -38,6 +44,7 @@ THREAT_MAP: Dict[str, tuple] = {
     "ammunition": ("CRITICAL", (0, 0, 220)),
     "grenade":    ("CRITICAL", (0, 0, 220)),
     "explosive":  ("CRITICAL", (0, 0, 220)),
+    "explosion":  ("CRITICAL", (0, 0, 220)),
     "machete":    ("HIGH",     (0, 60, 255)),
     "blade":      ("HIGH",     (0, 60, 255)),
 }
@@ -74,8 +81,10 @@ if _weapons_path and Path(_weapons_path).exists():
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
-LOW_LIGHT_THRESHOLD = int(os.getenv("LOW_LIGHT_THRESHOLD", "80"))
-WEAPON_HELD_OVERLAP = 0.30
+LOW_LIGHT_THRESHOLD  = int(os.getenv("LOW_LIGHT_THRESHOLD", "80"))
+WEAPON_HELD_OVERLAP  = 0.30
+# Weapons model uses a lower threshold — missing a gun is worse than a false positive
+WEAPONS_CONF         = float(os.getenv("WEAPONS_CONF_THRESHOLD", "0.25"))
 
 
 def _enhance_low_light(frame: np.ndarray) -> np.ndarray:
@@ -151,26 +160,39 @@ def detect_frame(
         annotated, dets = _hog_detect(frame)
         return annotated, dets, _top_threat(dets)
 
-    annotated  = frame.copy()
-    detections = []
+    annotated    = frame.copy()
+    detections   = []
     person_boxes = []
+    coco_weapons = []  # non-person COCO detections held until person_boxes is complete
 
-    # ── COCO model (person + knife) ───────────────────────────────────────────
+    # ── COCO model — pass 1: collect persons ─────────────────────────────────
     results = _coco_model(frame, verbose=False)[0]
     for box in results.boxes:
         cls_id = int(box.cls[0])
         if cls_id not in COCO_CLASSES:
             continue
-        conf  = float(box.conf[0])
+        conf = float(box.conf[0])
         if conf < confidence_threshold:
             continue
         label = COCO_CLASSES[cls_id]
         x1, y1, x2, y2 = map(int, box.xyxy[0])
-        threat, color = THREAT_MAP.get(label, ("LOW", (0,200,80)))
-        detections.append({"label": label, "confidence": round(conf, 3),
-                           "bbox": [x1,y1,x2,y2], "threat": threat})
         if label == "person":
             person_boxes.append([x1, y1, x2, y2])
+            threat, color = THREAT_MAP.get("person", ("LOW", (0, 200, 80)))
+            detections.append({"label": "person", "confidence": round(conf, 3),
+                               "bbox": [x1, y1, x2, y2], "threat": threat})
+            _draw_box(annotated, x1, y1, x2, y2, "person", conf, color)
+        else:
+            coco_weapons.append((label, conf, x1, y1, x2, y2))
+
+    # ── COCO model — pass 2: weapons with held-weapon check ──────────────────
+    for label, conf, x1, y1, x2, y2 in coco_weapons:
+        threat, color = THREAT_MAP.get(label, ("HIGH", (0, 60, 255)))
+        if _weapon_held_by_person([x1, y1, x2, y2], person_boxes):
+            threat = "CRITICAL"
+            color  = (0, 0, 200)
+        detections.append({"label": label, "confidence": round(conf, 3),
+                           "bbox": [x1, y1, x2, y2], "threat": threat})
         _draw_box(annotated, x1, y1, x2, y2, label, conf, color)
 
     # ── Weapons model ─────────────────────────────────────────────────────────
@@ -178,17 +200,16 @@ def detect_frame(
         w_results = _weapons_model(frame, verbose=False)[0]
         for box in w_results.boxes:
             conf = float(box.conf[0])
-            if conf < confidence_threshold:
+            if conf < WEAPONS_CONF:
                 continue
             cls_name = _weapons_model.names[int(box.cls[0])].lower()
             threat, color = THREAT_MAP.get(cls_name, ("HIGH", (0, 60, 255)))
             x1, y1, x2, y2 = map(int, box.xyxy[0])
-            # Escalate to CRITICAL if the weapon is being held by a person
             if _weapon_held_by_person([x1, y1, x2, y2], person_boxes):
                 threat = "CRITICAL"
                 color  = (0, 0, 200)
             detections.append({"label": cls_name, "confidence": round(conf, 3),
-                               "bbox": [x1,y1,x2,y2], "threat": threat})
+                               "bbox": [x1, y1, x2, y2], "threat": threat})
             _draw_box(annotated, x1, y1, x2, y2, cls_name, conf, color)
 
     # ── Loitering check ───────────────────────────────────────────────────────
@@ -239,6 +260,24 @@ def _draw_threat_banner(frame, threat_level: str):
                 (8, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.62, (255,255,255), 2)
 
 
+def _annotate_live(frame: np.ndarray, detections: list) -> None:
+    """Draw cached detection boxes on the current live frame (in-place)."""
+    ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    cv2.putText(frame, ts, (8, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (180, 180, 180), 1)
+    for det in detections:
+        x1, y1, x2, y2 = map(int, det["bbox"])
+        label  = det["label"]
+        conf   = det["confidence"]
+        threat = det["threat"]
+        _, color = THREAT_MAP.get(label, ("LOW", (0, 200, 80)))
+        if threat == "CRITICAL":
+            color = (0, 0, 200)
+        _draw_box(frame, x1, y1, x2, y2, label, conf, color)
+    top = _top_threat(detections)
+    if top not in ("NONE", "LOW"):
+        _draw_threat_banner(frame, top)
+
+
 # ── CameraDetector ────────────────────────────────────────────────────────────
 
 class CameraDetector:
@@ -264,16 +303,36 @@ class CameraDetector:
         self._paused        = False
         self._thread: Optional[threading.Thread] = None
         self._last_alert    = 0.0
+        self._last_threat   = "NONE"   # track severity of last fired alert
         self._loop: Optional[asyncio.AbstractEventLoop] = None
 
         self.on_detection: List[Callable] = []
 
+        # ── Energy tracking ───────────────────────────────────────────────────
+        self._tracker       = None
+        self._session_start = 0.0
+        self._frames_read      = 0   # every frame from camera
+        self._frames_skipped   = 0   # skipped by motion filter
+        self._inferences_run   = 0   # actual AI inference calls
+        self._alerts_fired     = 0
+
     # ── Control ───────────────────────────────────────────────────────────────
 
     def start(self, loop: asyncio.AbstractEventLoop):
-        self._loop    = loop
-        self._running = True
-        self._thread  = threading.Thread(target=self._run, daemon=True)
+        self._loop         = loop
+        self._running      = True
+        self._session_start = time.time()
+        if _CODECARBON_OK:
+            self._tracker = _ETracker(
+                project_name="vigirix-edge",
+                log_level="error",
+                save_to_file=False,
+                measure_power_secs=2,
+                allow_multiple_runs=True,
+            )
+            self._tracker.start()
+            logger.info("CodeCarbon energy tracking active")
+        self._thread = threading.Thread(target=self._run, daemon=True)
         self._thread.start()
         logger.info("Camera detector started")
 
@@ -281,6 +340,11 @@ class CameraDetector:
         self._running = False
         if self._thread:
             self._thread.join(timeout=5)
+        if self._tracker:
+            try:
+                self._tracker.stop()
+            except Exception:
+                pass
 
     def pause(self):
         self._paused = True
@@ -298,6 +362,41 @@ class CameraDetector:
         with self._lock:
             return self._latest_frame
 
+    def get_energy_stats(self) -> dict:
+        duration_s  = time.time() - self._session_start if self._session_start else 0
+        kwh = co2_g = cpu_kwh = gpu_kwh = ram_kwh = 0.0
+        if self._tracker:
+            try:
+                kwh     = self._tracker._total_energy.kWh
+                cpu_kwh = self._tracker._total_cpu_energy.kWh
+                gpu_kwh = self._tracker._total_gpu_energy.kWh
+                ram_kwh = self._tracker._total_ram_energy.kWh
+                # use tracker emissions if available, else estimate at 0.5 kg CO2/kWh
+                raw_co2 = float(self._tracker._total_emissions or 0)
+                co2_g   = raw_co2 * 1000 if raw_co2 else kwh * 0.5 * 1000
+            except Exception:
+                pass
+
+        skipped_pct = 0.0
+        if self._frames_read > 0:
+            skipped_pct = round(self._frames_skipped / self._frames_read * 100, 1)
+
+        return {
+            "session_seconds":    round(duration_s, 1),
+            "energy_kwh":         round(kwh, 8),
+            "energy_wh":          round(kwh * 1000, 5),
+            "co2_grams":          round(co2_g, 4),
+            "cpu_kwh":            round(cpu_kwh, 8),
+            "gpu_kwh":            round(gpu_kwh, 8),
+            "ram_kwh":            round(ram_kwh, 8),
+            "frames_read":        self._frames_read,
+            "inferences_run":     self._inferences_run,
+            "frames_skipped_motion": self._frames_skipped,
+            "motion_filter_savings_pct": skipped_pct,
+            "alerts_fired":       self._alerts_fired,
+            "tracker_active":     self._tracker is not None,
+        }
+
     # ── Internal loop ─────────────────────────────────────────────────────────
 
     def _run(self):
@@ -308,8 +407,9 @@ class CameraDetector:
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
-        prev_frame   = None
-        last_detect  = 0.0
+        prev_frame  = None
+        last_detect = 0.0
+        last_dets: list = []   # cached detections drawn on every live frame
 
         while self._running:
             if self._paused:
@@ -321,36 +421,47 @@ class CameraDetector:
                 time.sleep(0.1)
                 continue
 
+            self._frames_read += 1
             now        = time.time()
             run_detect = (now - last_detect) >= self.detection_interval
 
-            # Always push the raw frame immediately so the stream never stalls
-            _, raw_buf = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, 72])
-            with self._lock:
-                self._latest_frame = raw_buf.tobytes()
-
             if run_detect:
-                last_detect = now
-                # Motion pre-filter — save energy on static scenes
+                last_detect   = now
+                should_detect = True
                 if self.motion_filter and prev_frame is not None:
                     if not _motion_detected(prev_frame, frame):
-                        prev_frame = frame.copy()
-                        continue
-                annotated, detections, threat = detect_frame(
-                    frame,
-                    confidence_threshold=self.confidence_threshold,
-                    loitering_tracker=self._loitering,
-                )
+                        should_detect = False
+                        self._frames_skipped += 1
                 prev_frame = frame.copy()
 
-                if detections and (now - self._last_alert) >= self.alert_cooldown:
-                    self._last_alert = now
-                    snapshot = save_snapshot(annotated)
-                    self._fire(snapshot, detections, threat)
+                if should_detect:
+                    self._inferences_run += 1
+                    annotated, detections, threat = detect_frame(
+                        frame,
+                        confidence_threshold=self.confidence_threshold,
+                        loitering_tracker=self._loitering,
+                    )
+                    last_dets = detections
 
-                _, ann_buf = cv2.imencode(".jpg", annotated, [cv2.IMWRITE_JPEG_QUALITY, 75])
-                with self._lock:
-                    self._latest_frame = ann_buf.tobytes()
+                    if detections:
+                        top          = _top_threat(detections)
+                        cooldown_ok  = (now - self._last_alert) >= self.alert_cooldown
+                        # Always fire if new threat is more severe than last alert
+                        escalation   = (SEVERITY_RANK.get(top, 0) >
+                                        SEVERITY_RANK.get(self._last_threat, 0))
+                        if cooldown_ok or escalation:
+                            self._last_alert  = now
+                            self._last_threat = top
+                            self._alerts_fired += 1
+                            snapshot = save_snapshot(annotated)
+                            self._fire(snapshot, detections, threat)
+
+            # Always render live frame with cached detection overlay
+            display = frame.copy()
+            _annotate_live(display, last_dets)
+            _, buf = cv2.imencode(".jpg", display, [cv2.IMWRITE_JPEG_QUALITY, 80])
+            with self._lock:
+                self._latest_frame = buf.tobytes()
 
         cap.release()
 

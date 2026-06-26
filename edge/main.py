@@ -12,6 +12,7 @@ from pathlib import Path
 
 import httpx
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
@@ -92,6 +93,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Vigirix Edge", lifespan=lifespan)
+app.add_middleware(CORSMiddleware, allow_origins=["*"],
+                   allow_methods=["*"], allow_headers=["*"])
 
 static_dir = Path("static")
 static_dir.mkdir(exist_ok=True)
@@ -152,3 +155,8 @@ def health():
         "paused":     camera.paused,
         "central_url": CENTRAL_URL,
     }
+
+
+@app.get("/api/energy")
+def energy():
+    return camera.get_energy_stats()
