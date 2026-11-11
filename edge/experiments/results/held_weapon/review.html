@@ -1,0 +1,592 @@
+<!doctype html><meta charset="utf-8">
+<title>Held-weapon review</title>
+<style>
+ body{font:14px system-ui;margin:16px;background:#fafafa;color:#222}
+ .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+ figure{margin:0;background:#fff;border:1px solid #ddd;border-radius:8px;overflow:hidden}
+ img{width:100%;display:block} figcaption{padding:8px;line-height:1.5}
+ .q{margin-top:6px;padding-top:6px;border-top:1px solid #eee}
+ .t{padding:1px 6px;border-radius:4px;color:#fff;background:#888}
+ .CRITICAL{background:#c62828} .HIGH{background:#ef6c00} .MEDIUM{background:#f9a825} .LOW{background:#2e7d32}
+ button{font:inherit;padding:8px 14px;margin:8px 0 16px}
+</style>
+<h1>Held-weapon escalation — manual review</h1>
+<p>For each image, mark whether a knife/scissors is <b>actually held by a person</b>. Then export.</p>
+<button onclick="exportCsv()">Export CSV</button> <span id="n"></span>
+<div class="grid">
+      <figure data-image="000000002431">
+        <img src="images/000000002431.jpg" loading="lazy" alt="COCO 000000002431">
+        <figcaption>
+          <b>000000002431</b> · frame: <span class="t HIGH">HIGH</span><br>
+          system: knife
+          → <b>UNATTENDED (HIGH)</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000002431" value="Y"> Yes</label>
+            <label><input type="radio" name="000000002431" value="N"> No</label>
+            <label><input type="radio" name="000000002431" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000005001">
+        <img src="images/000000005001.jpg" loading="lazy" alt="COCO 000000005001">
+        <figcaption>
+          <b>000000005001</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000005001" value="Y"> Yes</label>
+            <label><input type="radio" name="000000005001" value="N"> No</label>
+            <label><input type="radio" name="000000005001" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000012576">
+        <img src="images/000000012576.jpg" loading="lazy" alt="COCO 000000012576">
+        <figcaption>
+          <b>000000012576</b> · frame: <span class="t HIGH">HIGH</span><br>
+          system: knife
+          → <b>UNATTENDED (HIGH)</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000012576" value="Y"> Yes</label>
+            <label><input type="radio" name="000000012576" value="N"> No</label>
+            <label><input type="radio" name="000000012576" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000018380">
+        <img src="images/000000018380.jpg" loading="lazy" alt="COCO 000000018380">
+        <figcaption>
+          <b>000000018380</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000018380" value="Y"> Yes</label>
+            <label><input type="radio" name="000000018380" value="N"> No</label>
+            <label><input type="radio" name="000000018380" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000025096">
+        <img src="images/000000025096.jpg" loading="lazy" alt="COCO 000000025096">
+        <figcaption>
+          <b>000000025096</b> · frame: <span class="t HIGH">HIGH</span><br>
+          system: knife
+          → <b>UNATTENDED (HIGH)</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000025096" value="Y"> Yes</label>
+            <label><input type="radio" name="000000025096" value="N"> No</label>
+            <label><input type="radio" name="000000025096" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000027696">
+        <img src="images/000000027696.jpg" loading="lazy" alt="COCO 000000027696">
+        <figcaption>
+          <b>000000027696</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000027696" value="Y"> Yes</label>
+            <label><input type="radio" name="000000027696" value="N"> No</label>
+            <label><input type="radio" name="000000027696" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000031620">
+        <img src="images/000000031620.jpg" loading="lazy" alt="COCO 000000031620">
+        <figcaption>
+          <b>000000031620</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000031620" value="Y"> Yes</label>
+            <label><input type="radio" name="000000031620" value="N"> No</label>
+            <label><input type="radio" name="000000031620" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000044279">
+        <img src="images/000000044279.jpg" loading="lazy" alt="COCO 000000044279">
+        <figcaption>
+          <b>000000044279</b> · frame: <span class="t CRITICAL">CRITICAL</span><br>
+          system: knife
+          → <b>HELD (CRITICAL)</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000044279" value="Y"> Yes</label>
+            <label><input type="radio" name="000000044279" value="N"> No</label>
+            <label><input type="radio" name="000000044279" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000047112">
+        <img src="images/000000047112.jpg" loading="lazy" alt="COCO 000000047112">
+        <figcaption>
+          <b>000000047112</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000047112" value="Y"> Yes</label>
+            <label><input type="radio" name="000000047112" value="N"> No</label>
+            <label><input type="radio" name="000000047112" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000048396">
+        <img src="images/000000048396.jpg" loading="lazy" alt="COCO 000000048396">
+        <figcaption>
+          <b>000000048396</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000048396" value="Y"> Yes</label>
+            <label><input type="radio" name="000000048396" value="N"> No</label>
+            <label><input type="radio" name="000000048396" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000052996">
+        <img src="images/000000052996.jpg" loading="lazy" alt="COCO 000000052996">
+        <figcaption>
+          <b>000000052996</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000052996" value="Y"> Yes</label>
+            <label><input type="radio" name="000000052996" value="N"> No</label>
+            <label><input type="radio" name="000000052996" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000058350">
+        <img src="images/000000058350.jpg" loading="lazy" alt="COCO 000000058350">
+        <figcaption>
+          <b>000000058350</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000058350" value="Y"> Yes</label>
+            <label><input type="radio" name="000000058350" value="N"> No</label>
+            <label><input type="radio" name="000000058350" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000062808">
+        <img src="images/000000062808.jpg" loading="lazy" alt="COCO 000000062808">
+        <figcaption>
+          <b>000000062808</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000062808" value="Y"> Yes</label>
+            <label><input type="radio" name="000000062808" value="N"> No</label>
+            <label><input type="radio" name="000000062808" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000064084">
+        <img src="images/000000064084.jpg" loading="lazy" alt="COCO 000000064084">
+        <figcaption>
+          <b>000000064084</b> · frame: <span class="t NONE">NONE</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000064084" value="Y"> Yes</label>
+            <label><input type="radio" name="000000064084" value="N"> No</label>
+            <label><input type="radio" name="000000064084" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000066231">
+        <img src="images/000000066231.jpg" loading="lazy" alt="COCO 000000066231">
+        <figcaption>
+          <b>000000066231</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000066231" value="Y"> Yes</label>
+            <label><input type="radio" name="000000066231" value="N"> No</label>
+            <label><input type="radio" name="000000066231" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000081738">
+        <img src="images/000000081738.jpg" loading="lazy" alt="COCO 000000081738">
+        <figcaption>
+          <b>000000081738</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000081738" value="Y"> Yes</label>
+            <label><input type="radio" name="000000081738" value="N"> No</label>
+            <label><input type="radio" name="000000081738" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000091406">
+        <img src="images/000000091406.jpg" loading="lazy" alt="COCO 000000091406">
+        <figcaption>
+          <b>000000091406</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000091406" value="Y"> Yes</label>
+            <label><input type="radio" name="000000091406" value="N"> No</label>
+            <label><input type="radio" name="000000091406" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000092053">
+        <img src="images/000000092053.jpg" loading="lazy" alt="COCO 000000092053">
+        <figcaption>
+          <b>000000092053</b> · frame: <span class="t HIGH">HIGH</span><br>
+          system: knife
+          → <b>UNATTENDED (HIGH)</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000092053" value="Y"> Yes</label>
+            <label><input type="radio" name="000000092053" value="N"> No</label>
+            <label><input type="radio" name="000000092053" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000092939">
+        <img src="images/000000092939.jpg" loading="lazy" alt="COCO 000000092939">
+        <figcaption>
+          <b>000000092939</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000092939" value="Y"> Yes</label>
+            <label><input type="radio" name="000000092939" value="N"> No</label>
+            <label><input type="radio" name="000000092939" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000099024">
+        <img src="images/000000099024.jpg" loading="lazy" alt="COCO 000000099024">
+        <figcaption>
+          <b>000000099024</b> · frame: <span class="t HIGH">HIGH</span><br>
+          system: scissors
+          → <b>UNATTENDED (HIGH)</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000099024" value="Y"> Yes</label>
+            <label><input type="radio" name="000000099024" value="N"> No</label>
+            <label><input type="radio" name="000000099024" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000099039">
+        <img src="images/000000099039.jpg" loading="lazy" alt="COCO 000000099039">
+        <figcaption>
+          <b>000000099039</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000099039" value="Y"> Yes</label>
+            <label><input type="radio" name="000000099039" value="N"> No</label>
+            <label><input type="radio" name="000000099039" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000108253">
+        <img src="images/000000108253.jpg" loading="lazy" alt="COCO 000000108253">
+        <figcaption>
+          <b>000000108253</b> · frame: <span class="t CRITICAL">CRITICAL</span><br>
+          system: knife|knife
+          → <b>HELD (CRITICAL)</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000108253" value="Y"> Yes</label>
+            <label><input type="radio" name="000000108253" value="N"> No</label>
+            <label><input type="radio" name="000000108253" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000110999">
+        <img src="images/000000110999.jpg" loading="lazy" alt="COCO 000000110999">
+        <figcaption>
+          <b>000000110999</b> · frame: <span class="t NONE">NONE</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000110999" value="Y"> Yes</label>
+            <label><input type="radio" name="000000110999" value="N"> No</label>
+            <label><input type="radio" name="000000110999" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000113720">
+        <img src="images/000000113720.jpg" loading="lazy" alt="COCO 000000113720">
+        <figcaption>
+          <b>000000113720</b> · frame: <span class="t HIGH">HIGH</span><br>
+          system: knife|knife
+          → <b>UNATTENDED (HIGH)</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000113720" value="Y"> Yes</label>
+            <label><input type="radio" name="000000113720" value="N"> No</label>
+            <label><input type="radio" name="000000113720" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000123633">
+        <img src="images/000000123633.jpg" loading="lazy" alt="COCO 000000123633">
+        <figcaption>
+          <b>000000123633</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000123633" value="Y"> Yes</label>
+            <label><input type="radio" name="000000123633" value="N"> No</label>
+            <label><input type="radio" name="000000123633" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000140640">
+        <img src="images/000000140640.jpg" loading="lazy" alt="COCO 000000140640">
+        <figcaption>
+          <b>000000140640</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000140640" value="Y"> Yes</label>
+            <label><input type="radio" name="000000140640" value="N"> No</label>
+            <label><input type="radio" name="000000140640" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000142620">
+        <img src="images/000000142620.jpg" loading="lazy" alt="COCO 000000142620">
+        <figcaption>
+          <b>000000142620</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000142620" value="Y"> Yes</label>
+            <label><input type="radio" name="000000142620" value="N"> No</label>
+            <label><input type="radio" name="000000142620" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000144003">
+        <img src="images/000000144003.jpg" loading="lazy" alt="COCO 000000144003">
+        <figcaption>
+          <b>000000144003</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000144003" value="Y"> Yes</label>
+            <label><input type="radio" name="000000144003" value="N"> No</label>
+            <label><input type="radio" name="000000144003" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000146358">
+        <img src="images/000000146358.jpg" loading="lazy" alt="COCO 000000146358">
+        <figcaption>
+          <b>000000146358</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000146358" value="Y"> Yes</label>
+            <label><input type="radio" name="000000146358" value="N"> No</label>
+            <label><input type="radio" name="000000146358" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000153527">
+        <img src="images/000000153527.jpg" loading="lazy" alt="COCO 000000153527">
+        <figcaption>
+          <b>000000153527</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000153527" value="Y"> Yes</label>
+            <label><input type="radio" name="000000153527" value="N"> No</label>
+            <label><input type="radio" name="000000153527" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000156076">
+        <img src="images/000000156076.jpg" loading="lazy" alt="COCO 000000156076">
+        <figcaption>
+          <b>000000156076</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000156076" value="Y"> Yes</label>
+            <label><input type="radio" name="000000156076" value="N"> No</label>
+            <label><input type="radio" name="000000156076" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000156643">
+        <img src="images/000000156643.jpg" loading="lazy" alt="COCO 000000156643">
+        <figcaption>
+          <b>000000156643</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000156643" value="Y"> Yes</label>
+            <label><input type="radio" name="000000156643" value="N"> No</label>
+            <label><input type="radio" name="000000156643" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000158956">
+        <img src="images/000000158956.jpg" loading="lazy" alt="COCO 000000158956">
+        <figcaption>
+          <b>000000158956</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000158956" value="Y"> Yes</label>
+            <label><input type="radio" name="000000158956" value="N"> No</label>
+            <label><input type="radio" name="000000158956" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000160012">
+        <img src="images/000000160012.jpg" loading="lazy" alt="COCO 000000160012">
+        <figcaption>
+          <b>000000160012</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000160012" value="Y"> Yes</label>
+            <label><input type="radio" name="000000160012" value="N"> No</label>
+            <label><input type="radio" name="000000160012" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000166918">
+        <img src="images/000000166918.jpg" loading="lazy" alt="COCO 000000166918">
+        <figcaption>
+          <b>000000166918</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000166918" value="Y"> Yes</label>
+            <label><input type="radio" name="000000166918" value="N"> No</label>
+            <label><input type="radio" name="000000166918" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000167572">
+        <img src="images/000000167572.jpg" loading="lazy" alt="COCO 000000167572">
+        <figcaption>
+          <b>000000167572</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000167572" value="Y"> Yes</label>
+            <label><input type="radio" name="000000167572" value="N"> No</label>
+            <label><input type="radio" name="000000167572" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000171190">
+        <img src="images/000000171190.jpg" loading="lazy" alt="COCO 000000171190">
+        <figcaption>
+          <b>000000171190</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000171190" value="Y"> Yes</label>
+            <label><input type="radio" name="000000171190" value="N"> No</label>
+            <label><input type="radio" name="000000171190" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000172571">
+        <img src="images/000000172571.jpg" loading="lazy" alt="COCO 000000172571">
+        <figcaption>
+          <b>000000172571</b> · frame: <span class="t CRITICAL">CRITICAL</span><br>
+          system: knife
+          → <b>HELD (CRITICAL)</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000172571" value="Y"> Yes</label>
+            <label><input type="radio" name="000000172571" value="N"> No</label>
+            <label><input type="radio" name="000000172571" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000173008">
+        <img src="images/000000173008.jpg" loading="lazy" alt="COCO 000000173008">
+        <figcaption>
+          <b>000000173008</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000173008" value="Y"> Yes</label>
+            <label><input type="radio" name="000000173008" value="N"> No</label>
+            <label><input type="radio" name="000000173008" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure data-image="000000174123">
+        <img src="images/000000174123.jpg" loading="lazy" alt="COCO 000000174123">
+        <figcaption>
+          <b>000000174123</b> · frame: <span class="t LOW">LOW</span><br>
+          system: no weapon detected
+          → <b>—</b>
+          <div class="q">Actually held by a person?
+            <label><input type="radio" name="000000174123" value="Y"> Yes</label>
+            <label><input type="radio" name="000000174123" value="N"> No</label>
+            <label><input type="radio" name="000000174123" value="X"> No weapon visible</label>
+          </div>
+        </figcaption>
+      </figure></div>
+<script>
+const sys = {"000000002431": {"image": "000000002431", "weapon_detected": true, "weapon_labels": "knife", "system_held": false, "frame_threat": "HIGH"}, "000000005001": {"image": "000000005001", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000012576": {"image": "000000012576", "weapon_detected": true, "weapon_labels": "knife", "system_held": false, "frame_threat": "HIGH"}, "000000018380": {"image": "000000018380", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000025096": {"image": "000000025096", "weapon_detected": true, "weapon_labels": "knife", "system_held": false, "frame_threat": "HIGH"}, "000000027696": {"image": "000000027696", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000031620": {"image": "000000031620", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000044279": {"image": "000000044279", "weapon_detected": true, "weapon_labels": "knife", "system_held": true, "frame_threat": "CRITICAL"}, "000000047112": {"image": "000000047112", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000048396": {"image": "000000048396", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000052996": {"image": "000000052996", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000058350": {"image": "000000058350", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000062808": {"image": "000000062808", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000064084": {"image": "000000064084", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "NONE"}, "000000066231": {"image": "000000066231", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000081738": {"image": "000000081738", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000091406": {"image": "000000091406", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000092053": {"image": "000000092053", "weapon_detected": true, "weapon_labels": "knife", "system_held": false, "frame_threat": "HIGH"}, "000000092939": {"image": "000000092939", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000099024": {"image": "000000099024", "weapon_detected": true, "weapon_labels": "scissors", "system_held": false, "frame_threat": "HIGH"}, "000000099039": {"image": "000000099039", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000108253": {"image": "000000108253", "weapon_detected": true, "weapon_labels": "knife|knife", "system_held": true, "frame_threat": "CRITICAL"}, "000000110999": {"image": "000000110999", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "NONE"}, "000000113720": {"image": "000000113720", "weapon_detected": true, "weapon_labels": "knife|knife", "system_held": false, "frame_threat": "HIGH"}, "000000123633": {"image": "000000123633", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000140640": {"image": "000000140640", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000142620": {"image": "000000142620", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000144003": {"image": "000000144003", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000146358": {"image": "000000146358", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000153527": {"image": "000000153527", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000156076": {"image": "000000156076", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000156643": {"image": "000000156643", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000158956": {"image": "000000158956", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000160012": {"image": "000000160012", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000166918": {"image": "000000166918", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000167572": {"image": "000000167572", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000171190": {"image": "000000171190", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000172571": {"image": "000000172571", "weapon_detected": true, "weapon_labels": "knife", "system_held": true, "frame_threat": "CRITICAL"}, "000000173008": {"image": "000000173008", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}, "000000174123": {"image": "000000174123", "weapon_detected": false, "weapon_labels": "", "system_held": false, "frame_threat": "LOW"}};
+function exportCsv(){
+  const lines=["image,weapon_detected,system_held,frame_threat,human_held"];
+  for(const [k,r] of Object.entries(sys)){
+    const v=(document.querySelector(`input[name="${k}"]:checked`)||{}).value||"";
+    lines.push([k,r.weapon_detected,r.system_held,r.frame_threat,v].join(","));
+  }
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([lines.join("\n")],{type:"text/csv"}));
+  a.download="held_weapon_labels.csv"; a.click();
+}
+document.addEventListener("change",()=>{
+  document.getElementById("n").textContent=
+    document.querySelectorAll("input:checked").length+" / 40 marked";
+});
+</script>

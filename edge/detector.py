@@ -41,6 +41,7 @@ THREAT_MAP: Dict[str, tuple] = {
     "firearm":    ("CRITICAL", (0, 0, 220)),
     "weapon":     ("CRITICAL", (0, 0, 220)),
     "handgun":    ("CRITICAL", (0, 0, 220)),
+    "shotgun":    ("CRITICAL", (0, 0, 220)),
     "ammunition": ("CRITICAL", (0, 0, 220)),
     "grenade":    ("CRITICAL", (0, 0, 220)),
     "explosive":  ("CRITICAL", (0, 0, 220)),
@@ -83,8 +84,9 @@ if _weapons_path and Path(_weapons_path).exists():
 
 LOW_LIGHT_THRESHOLD  = int(os.getenv("LOW_LIGHT_THRESHOLD", "80"))
 WEAPON_HELD_OVERLAP  = 0.30
-# Weapons model uses a lower threshold — missing a gun is worse than a false positive
-WEAPONS_CONF         = float(os.getenv("WEAPONS_CONF_THRESHOLD", "0.25"))
+# Chosen from the measured trade-off (firearm_v1_v2_comparison.json): 89.5% of
+# test gun images detected, 5.1% false alarms on people photos, none on CCTV
+WEAPONS_CONF         = float(os.getenv("WEAPONS_CONF_THRESHOLD", "0.45"))
 
 
 def _enhance_low_light(frame: np.ndarray) -> np.ndarray:
@@ -154,13 +156,15 @@ def detect_frame(
     Returns (annotated_frame, detections, threat_level)
     detections = [{"label", "confidence", "bbox", "threat"}, ...]
     """
-    frame = _enhance_low_light(frame)
+    # The detector sees the original frame (CLAHE lowered AP in evaluation);
+    # the enhanced frame is only for the human-facing snapshot.
+    view = _enhance_low_light(frame)
 
     if _coco_model is None:
-        annotated, dets = _hog_detect(frame)
+        annotated, dets = _hog_detect(view.copy())
         return annotated, dets, _top_threat(dets)
 
-    annotated    = frame.copy()
+    annotated    = view.copy()
     detections   = []
     person_boxes = []
     coco_weapons = []  # non-person COCO detections held until person_boxes is complete
@@ -256,7 +260,7 @@ def _draw_threat_banner(frame, threat_level: str):
     overlay = frame.copy()
     cv2.rectangle(overlay, (0, 0), (w, 28), color, -1)
     cv2.addWeighted(overlay, 0.55, frame, 0.45, 0, frame)
-    cv2.putText(frame, f"⚠ THREAT: {threat_level}",
+    cv2.putText(frame, f"THREAT: {threat_level}",
                 (8, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.62, (255,255,255), 2)
 
 
@@ -283,7 +287,7 @@ def _annotate_live(frame: np.ndarray, detections: list) -> None:
 class CameraDetector:
     def __init__(
         self,
-        camera_index:         int   = 0,
+        camera_index:         "int | str" = 0,   # webcam index, or a video file path
         detection_interval:   float = 1.0,
         alert_cooldown:       float = 15.0,
         confidence_threshold: float = 0.45,
@@ -311,10 +315,17 @@ class CameraDetector:
         # ── Energy tracking ───────────────────────────────────────────────────
         self._tracker       = None
         self._session_start = 0.0
+        self._session_end   = 0.0   # set when a video file finishes
+        self._final_stats: Optional[dict] = None
+        self.finished       = False
         self._frames_read      = 0   # every frame from camera
         self._frames_skipped   = 0   # skipped by motion filter
         self._inferences_run   = 0   # actual AI inference calls
         self._alerts_fired     = 0
+
+        # ── Latency tracking (ms) ─────────────────────────────────────────────
+        self._inference_ms: List[float] = []   # detect_frame() duration
+        self._alert_ms:     List[float] = []   # frame capture → central server acknowledged
 
     # ── Control ───────────────────────────────────────────────────────────────
 
@@ -329,6 +340,8 @@ class CameraDetector:
                 save_to_file=False,
                 measure_power_secs=2,
                 allow_multiple_runs=True,
+                # Attribute CPU load to this process only, not the whole machine
+                tracking_mode=os.getenv("CODECARBON_TRACKING_MODE", "process"),
             )
             self._tracker.start()
             logger.info("CodeCarbon energy tracking active")
@@ -340,11 +353,7 @@ class CameraDetector:
         self._running = False
         if self._thread:
             self._thread.join(timeout=5)
-        if self._tracker:
-            try:
-                self._tracker.stop()
-            except Exception:
-                pass
+        self._stop_tracker()
 
     def pause(self):
         self._paused = True
@@ -362,8 +371,38 @@ class CameraDetector:
         with self._lock:
             return self._latest_frame
 
+    def record_alert_latency(self, ms: float):
+        self._alert_ms.append(ms)
+
+    def _stop_tracker(self):
+        if self._tracker:
+            try:
+                self._tracker.stop()
+            except Exception:
+                pass
+
+    def get_latency_stats(self) -> dict:
+        def summary(values: List[float]) -> dict:
+            if not values:
+                return {"count": 0, "mean_ms": None, "median_ms": None, "p95_ms": None, "max_ms": None}
+            arr = np.array(values)
+            return {
+                "count":     len(values),
+                "mean_ms":   round(float(arr.mean()), 1),
+                "median_ms": round(float(np.median(arr)), 1),
+                "p95_ms":    round(float(np.percentile(arr, 95)), 1),
+                "max_ms":    round(float(arr.max()), 1),
+            }
+        return {
+            "inference":     summary(self._inference_ms),
+            "alert_latency": summary(self._alert_ms),
+        }
+
     def get_energy_stats(self) -> dict:
-        duration_s  = time.time() - self._session_start if self._session_start else 0
+        if self._final_stats:
+            return self._final_stats
+        end         = self._session_end or time.time()
+        duration_s  = end - self._session_start if self._session_start else 0
         kwh = co2_g = cpu_kwh = gpu_kwh = ram_kwh = 0.0
         if self._tracker:
             try:
@@ -395,17 +434,27 @@ class CameraDetector:
             "motion_filter_savings_pct": skipped_pct,
             "alerts_fired":       self._alerts_fired,
             "tracker_active":     self._tracker is not None,
+            "source_finished":    self.finished,
         }
 
     # ── Internal loop ─────────────────────────────────────────────────────────
 
     def _run(self):
+        is_file = isinstance(self.camera_index, str)
         cap = cv2.VideoCapture(self.camera_index)
         if not cap.isOpened():
             logger.error(f"Cannot open camera {self.camera_index}")
             return
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+        if is_file:
+            # Play recorded footage at its native frame rate so time-based
+            # settings (detection interval, cooldown, dwell time) behave as live.
+            fps         = cap.get(cv2.CAP_PROP_FPS) or 25.0
+            frame_gap   = 1.0 / fps
+            next_due    = time.time()
+            logger.info(f"Playing video file {self.camera_index} at {fps:.1f} fps")
+        else:
+            cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
         prev_frame  = None
         last_detect = 0.0
@@ -413,11 +462,39 @@ class CameraDetector:
 
         while self._running:
             if self._paused:
+                # Release the webcam while paused so the sensor powers down
+                if not is_file and cap is not None:
+                    cap.release()
+                    cap = None
+                    logger.info("Camera released (paused)")
                 time.sleep(0.1)
                 continue
+            if cap is None:
+                cap = cv2.VideoCapture(self.camera_index)
+                cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+                cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+                prev_frame = None
+                logger.info("Camera reopened (resumed)")
+
+            if is_file:
+                wait = next_due - time.time()
+                if wait > 0:
+                    time.sleep(wait)
+                next_due += frame_gap
 
             ok, frame = cap.read()
             if not ok:
+                if is_file:
+                    # Freeze figures at end of footage; tracker.stop() can take
+                    # several seconds and would otherwise add idle energy.
+                    self._session_end = time.time()
+                    self.finished     = True
+                    self._final_stats = self.get_energy_stats()
+                    self._running     = False
+                    logger.info(f"Video finished — stats: {self._final_stats} "
+                                f"latency: {self.get_latency_stats()}")
+                    self._stop_tracker()
+                    break
                 time.sleep(0.1)
                 continue
 
@@ -436,11 +513,13 @@ class CameraDetector:
 
                 if should_detect:
                     self._inferences_run += 1
+                    t0 = time.perf_counter()
                     annotated, detections, threat = detect_frame(
                         frame,
                         confidence_threshold=self.confidence_threshold,
                         loitering_tracker=self._loitering,
                     )
+                    self._inference_ms.append((time.perf_counter() - t0) * 1000)
                     last_dets = detections
 
                     if detections:
@@ -454,21 +533,25 @@ class CameraDetector:
                             self._last_threat = top
                             self._alerts_fired += 1
                             snapshot = save_snapshot(annotated)
-                            self._fire(snapshot, detections, threat)
+                            self._fire(snapshot, detections, threat, captured_at=now)
 
             # Always render live frame with cached detection overlay
-            display = frame.copy()
+            # Night enhancement for the operator's live view
+            display = _enhance_low_light(frame)
+            if display is frame:
+                display = frame.copy()
             _annotate_live(display, last_dets)
             _, buf = cv2.imencode(".jpg", display, [cv2.IMWRITE_JPEG_QUALITY, 80])
             with self._lock:
                 self._latest_frame = buf.tobytes()
 
-        cap.release()
+        if cap is not None:
+            cap.release()
 
-    def _fire(self, snapshot: str, detections: list, threat: str):
+    def _fire(self, snapshot: str, detections: list, threat: str, captured_at: float):
         if not self._loop or not self.on_detection:
             return
         for cb in self.on_detection:
             asyncio.run_coroutine_threadsafe(
-                cb(snapshot, detections, threat), self._loop
+                cb(snapshot, detections, threat, captured_at), self._loop
             )

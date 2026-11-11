@@ -1,0 +1,121 @@
+{
+  "meta": {
+    "dataset": "COCO val2017, images containing at least one person",
+    "model": "yolov8n.pt",
+    "device": "mps",
+    "conf_threshold": 0.35,
+    "iou_match": 0.5,
+    "low_light_threshold": 80,
+    "dark_levels": {
+      "mild": {
+        "gain": 0.5,
+        "gamma": 1.2,
+        "noise_sigma": 3.0
+      },
+      "moderate": {
+        "gain": 0.3,
+        "gamma": 1.5,
+        "noise_sigma": 5.0
+      },
+      "severe": {
+        "gain": 0.15,
+        "gamma": 2.0,
+        "noise_sigma": 8.0
+      }
+    },
+    "clahe_ms": {
+      "mean": 2.19,
+      "median": 2.21
+    },
+    "seed": 0
+  },
+  "results": {
+    "original": {
+      "images": 2693,
+      "person_instances": 10777,
+      "mean_brightness": 114.1,
+      "precision": 0.8577,
+      "recall": 0.6037,
+      "f1": 0.7086,
+      "ap50": 0.7461,
+      "tp": 6506,
+      "fp": 1079,
+      "fn": 4271
+    },
+    "dark_mild": {
+      "images": 2693,
+      "person_instances": 10777,
+      "mean_brightness": 50.6,
+      "precision": 0.8664,
+      "recall": 0.5746,
+      "f1": 0.691,
+      "ap50": 0.7278,
+      "tp": 6193,
+      "fp": 955,
+      "fn": 4584
+    },
+    "dark_moderate": {
+      "images": 2693,
+      "person_instances": 10777,
+      "mean_brightness": 26.2,
+      "precision": 0.869,
+      "recall": 0.4873,
+      "f1": 0.6245,
+      "ap50": 0.6532,
+      "tp": 5252,
+      "fp": 792,
+      "fn": 5525
+    },
+    "dark_severe": {
+      "images": 2693,
+      "person_instances": 10777,
+      "mean_brightness": 11.5,
+      "precision": 0.8654,
+      "recall": 0.2219,
+      "f1": 0.3532,
+      "ap50": 0.3674,
+      "tp": 2391,
+      "fp": 372,
+      "fn": 8386
+    },
+    "dark_mild+clahe": {
+      "images": 2693,
+      "person_instances": 10777,
+      "mean_brightness": 80.2,
+      "precision": 0.8634,
+      "recall": 0.5743,
+      "f1": 0.6898,
+      "ap50": 0.7232,
+      "tp": 6189,
+      "fp": 979,
+      "fn": 4588,
+      "clahe_applied_pct": 96.1
+    },
+    "dark_moderate+clahe": {
+      "images": 2693,
+      "person_instances": 10777,
+      "mean_brightness": 53.4,
+      "precision": 0.8592,
+      "recall": 0.4764,
+      "f1": 0.6129,
+      "ap50": 0.6363,
+      "tp": 5134,
+      "fp": 841,
+      "fn": 5643,
+      "clahe_applied_pct": 100.0
+    },
+    "dark_severe+clahe": {
+      "images": 2693,
+      "person_instances": 10777,
+      "mean_brightness": 29.9,
+      "precision": 0.841,
+      "recall": 0.2115,
+      "f1": 0.338,
+      "ap50": 0.3475,
+      "tp": 2279,
+      "fp": 431,
+      "fn": 8498,
+      "clahe_applied_pct": 100.0
+    }
+  }
+}

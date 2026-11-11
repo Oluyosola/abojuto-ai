@@ -30,3 +30,16 @@ edge/static/snapshots/
 # OS
 .DS_Store
 Thumbs.db
+
+# Experiment alert logs
+edge/metrics/
+
+# Firearms training data and runs
+edge/training/data/
+edge/training/runs/
+
+# Experiment datasets and outputs
+edge/experiments/data/
+# Generated experiment images (COCO/CAVIAR derivatives); keep results data only
+edge/experiments/results/**/*.jpg
+edge/experiments/results/**/*.png

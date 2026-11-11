@@ -1,0 +1,41 @@
+{
+  "gun_images": 352,
+  "people_images": 2693,
+  "rows": [
+    {
+      "threshold": 0.25,
+      "gun_image_recall": 0.9773,
+      "false_alarm_rate": 0.3049
+    },
+    {
+      "threshold": 0.35,
+      "gun_image_recall": 0.9631,
+      "false_alarm_rate": 0.2091
+    },
+    {
+      "threshold": 0.45,
+      "gun_image_recall": 0.9034,
+      "false_alarm_rate": 0.1285
+    },
+    {
+      "threshold": 0.5,
+      "gun_image_recall": 0.8494,
+      "false_alarm_rate": 0.0984
+    },
+    {
+      "threshold": 0.55,
+      "gun_image_recall": 0.7955,
+      "false_alarm_rate": 0.0761
+    },
+    {
+      "threshold": 0.6,
+      "gun_image_recall": 0.7472,
+      "false_alarm_rate": 0.0483
+    },
+    {
+      "threshold": 0.7,
+      "gun_image_recall": 0.6051,
+      "false_alarm_rate": 0.0167
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "config": "capture_only",
+  "settings": {
+    "DETECTION_INTERVAL": "1e9",
+    "MOTION_FILTER": "false",
+    "LOW_LIGHT_THRESHOLD": "0"
+  },
+  "cpu_seconds": 26.54,
+  "clahe_activations": 0,
+  "presence_seconds": [],
+  "false_firearm_seconds": [],
+  "weapons_model_loaded": true,
+  "energy": {
+    "session_seconds": 317.5,
+    "energy_kwh": 0.00031305,
+    "energy_wh": 0.31305,
+    "co2_grams": 0.1565,
+    "cpu_kwh": 5.18e-05,
+    "gpu_kwh": 0.0,
+    "ram_kwh": 0.00026126,
+    "frames_read": 7934,
+    "inferences_run": 1,
+    "frames_skipped_motion": 0,
+    "motion_filter_savings_pct": 0.0,
+    "alerts_fired": 0,
+    "tracker_active": true,
+    "source_finished": true
+  },
+  "inference_ms": {
+    "count": 1,
+    "mean_ms": 638.4,
+    "median_ms": 638.4,
+    "p95_ms": 638.4,
+    "max_ms": 638.4
+  }
+}

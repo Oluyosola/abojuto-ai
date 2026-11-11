@@ -107,14 +107,17 @@ async def _send_telegram(threat_level, device_id, location, detections, snapshot
         async with httpx.AsyncClient(timeout=10) as client:
             if snap and snap.exists():
                 with open(snap, "rb") as f:
-                    await client.post(url, data={
+                    r = await client.post(url, data={
                         "chat_id": TG_CHAT, "caption": caption, "parse_mode": "Markdown"
                     }, files={"photo": (snap.name, f, "image/jpeg")})
             else:
-                await client.post(
+                r = await client.post(
                     f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage",
                     json={"chat_id": TG_CHAT, "text": caption, "parse_mode": "Markdown"},
                 )
+        if r.status_code != 200:
+            logger.error(f"Telegram rejected [{threat_level}]: {r.status_code} {r.text[:200]}")
+            return
         logger.info(f"Telegram sent [{threat_level}]")
     except Exception as e:
         logger.error(f"Telegram failed: {e}")

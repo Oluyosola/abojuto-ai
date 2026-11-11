@@ -5,10 +5,14 @@ events to the Vigirix central server.
 """
 import asyncio
 import base64
+import csv
 import logging
 import os
+import time
 from contextlib import asynccontextmanager
+from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 import httpx
 from fastapi import FastAPI
@@ -25,7 +29,9 @@ logging.basicConfig(level=logging.INFO,
 logger = logging.getLogger("vigirix.edge")
 
 # ── Config ────────────────────────────────────────────────────────────────────
-CAMERA_INDEX         = int(os.getenv("CAMERA_INDEX", "0"))
+# A number selects a webcam; anything else is treated as a video file path
+_camera_src          = os.getenv("CAMERA_INDEX", "0").strip()
+CAMERA_INDEX         = int(_camera_src) if _camera_src.isdigit() else _camera_src
 DETECTION_INTERVAL   = float(os.getenv("DETECTION_INTERVAL", "1.0"))
 ALERT_COOLDOWN       = float(os.getenv("ALERT_COOLDOWN", "15.0"))
 CONFIDENCE_THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", "0.45"))
@@ -40,6 +46,11 @@ DEVICE_LOC   = os.getenv("DEVICE_LOCATION", "Main Entrance")
 SNAPSHOTS_DIR = Path(os.getenv("SNAPSHOTS_DIR", "static/snapshots"))
 SNAPSHOTS_DIR.mkdir(parents=True, exist_ok=True)
 
+# One CSV row per alert, for offline analysis of latency per configuration
+ALERT_LOG = Path(os.getenv("ALERT_LOG", "metrics/alerts.csv"))
+ALERT_LOG.parent.mkdir(parents=True, exist_ok=True)
+RUN_LABEL = os.getenv("RUN_LABEL", "live")   # e.g. "baseline" / "proposed"
+
 camera = CameraDetector(
     camera_index=CAMERA_INDEX,
     detection_interval=DETECTION_INTERVAL,
@@ -52,8 +63,26 @@ camera = CameraDetector(
 
 # ── Alert forwarding ─────────────────────────────────────────────────────────
 
-async def forward_to_central(snapshot_path: str, detections: list, threat_level: str):
-    """POST the detection event to the central server."""
+def _log_alert(captured_at: float, threat_level: str, detections: list,
+               latency_ms: Optional[float], status: str):
+    new_file = not ALERT_LOG.exists()
+    with ALERT_LOG.open("a", newline="") as f:
+        w = csv.writer(f)
+        if new_file:
+            w.writerow(["run_label", "source", "captured_at", "threat_level",
+                        "labels", "latency_ms", "status"])
+        w.writerow([RUN_LABEL, CAMERA_INDEX,
+                    datetime.fromtimestamp(captured_at).isoformat(timespec="milliseconds"),
+                    threat_level, "|".join(d["label"] for d in detections),
+                    "" if latency_ms is None else round(latency_ms, 1), status])
+
+
+async def forward_to_central(snapshot_path: str, detections: list, threat_level: str,
+                             captured_at: float):
+    """POST the detection event to the central server.
+
+    Alert latency = frame capture → central server acknowledges the event.
+    """
     snapshot_b64 = None
     p = Path(snapshot_path)
     if p.exists():
@@ -72,10 +101,15 @@ async def forward_to_central(snapshot_path: str, detections: list, threat_level:
         async with httpx.AsyncClient(timeout=8) as client:
             r = await client.post(f"{CENTRAL_URL}/api/ingest", json=payload, headers=headers)
         if r.status_code == 200:
-            logger.info(f"Alert forwarded → central [{threat_level}]")
+            latency_ms = (time.time() - captured_at) * 1000
+            camera.record_alert_latency(latency_ms)
+            _log_alert(captured_at, threat_level, detections, latency_ms, "ok")
+            logger.info(f"Alert forwarded → central [{threat_level}] in {latency_ms:.0f} ms")
         else:
+            _log_alert(captured_at, threat_level, detections, None, f"http_{r.status_code}")
             logger.warning(f"Central rejected alert: {r.status_code}")
     except Exception as e:
+        _log_alert(captured_at, threat_level, detections, None, "unreachable")
         logger.error(f"Could not reach central server: {e}")
 
 
@@ -160,3 +194,8 @@ def health():
 @app.get("/api/energy")
 def energy():
     return camera.get_energy_stats()
+
+
+@app.get("/api/latency")
+def latency():
+    return camera.get_latency_stats()

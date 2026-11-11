@@ -1,0 +1,610 @@
+{
+  "scenario": {
+    "fps": 25.0,
+    "size": [
+      384,
+      288
+    ],
+    "clips": [
+      {
+        "clip": "Walk1.mpg",
+        "frames": 612,
+        "seconds": 24.5
+      },
+      {
+        "clip": "Browse1.mpg",
+        "frames": 1044,
+        "seconds": 41.8
+      },
+      {
+        "clip": "Rest_InChair.mpg",
+        "frames": 1008,
+        "seconds": 40.3
+      },
+      {
+        "clip": "LeftBag.mpg",
+        "frames": 1440,
+        "seconds": 57.6
+      },
+      {
+        "clip": "Browse_WhileWaiting1.mpg",
+        "frames": 792,
+        "seconds": 31.7
+      },
+      {
+        "clip": "WalkByShop1cor.mpg",
+        "frames": 2360,
+        "seconds": 94.4
+      },
+      {
+        "clip": "OneLeaveShop1cor.mpg",
+        "frames": 295,
+        "seconds": 11.8
+      },
+      {
+        "clip": "EnterExitCrossingPaths1cor.mpg",
+        "frames": 383,
+        "seconds": 15.3
+      }
+    ],
+    "total_seconds": 317.4,
+    "source": "EC Funded CAVIAR project/IST 2001 37540 (CC BY-SA)"
+  },
+  "results": {
+    "capture_only": {
+      "runs": 2,
+      "settings": {
+        "DETECTION_INTERVAL": "1e9",
+        "MOTION_FILTER": "false",
+        "LOW_LIGHT_THRESHOLD": "0"
+      },
+      "duration_s": {
+        "mean": 317.5,
+        "sd": 0.0
+      },
+      "energy_wh": {
+        "mean": 0.314295,
+        "sd": 0.001761
+      },
+      "cpu_energy_wh": {
+        "mean": 0.052805,
+        "sd": 0.001421
+      },
+      "ram_energy_wh": {
+        "mean": 0.261495,
+        "sd": 0.000332
+      },
+      "co2_g": {
+        "mean": 0.15715,
+        "sd": 0.000919
+      },
+      "cpu_seconds": {
+        "mean": 27.04,
+        "sd": 0.707107
+      },
+      "inferences": {
+        "mean": 1,
+        "sd": 0.0
+      },
+      "frames_read": {
+        "mean": 7934,
+        "sd": 0.0
+      },
+      "skipped_by_motion": {
+        "mean": 0,
+        "sd": 0.0
+      },
+      "clahe_activations": {
+        "mean": 0,
+        "sd": 0.0
+      },
+      "inference_ms_median": {
+        "mean": 682.15,
+        "sd": 61.871843
+      },
+      "person_seconds_detected": {
+        "mean": 0,
+        "sd": 0.0
+      },
+      "presence_recall_vs_baseline": {
+        "mean": 0.0,
+        "sd": 0.0
+      },
+      "presence_recall_tolerant_2s": {
+        "mean": 0.0,
+        "sd": 0.0
+      },
+      "clips_with_person_detected": {
+        "mean": 0,
+        "sd": 0.0
+      },
+      "false_firearm_seconds": {
+        "mean": 0,
+        "sd": 0.0
+      },
+      "weapons_model_loaded": true,
+      "first_detection_s_per_clip": {
+        "Walk1.mpg": [
+          null,
+          null
+        ],
+        "Browse1.mpg": [
+          null,
+          null
+        ],
+        "Rest_InChair.mpg": [
+          null,
+          null
+        ],
+        "LeftBag.mpg": [
+          null,
+          null
+        ],
+        "Browse_WhileWaiting1.mpg": [
+          null,
+          null
+        ],
+        "WalkByShop1cor.mpg": [
+          null,
+          null
+        ],
+        "OneLeaveShop1cor.mpg": [
+          null,
+          null
+        ],
+        "EnterExitCrossingPaths1cor.mpg": [
+          null,
+          null
+        ]
+      },
+      "energy_wh_change_vs_baseline_pct": -87.9,
+      "cpu_energy_wh_change_vs_baseline_pct": -97.7,
+      "cpu_seconds_change_vs_baseline_pct": -97.6,
+      "co2_g_change_vs_baseline_pct": -87.9
+    },
+    "baseline": {
+      "runs": 2,
+      "settings": {
+        "DETECTION_INTERVAL": "0",
+        "MOTION_FILTER": "false",
+        "LOW_LIGHT_THRESHOLD": "0"
+      },
+      "duration_s": {
+        "mean": 418.6,
+        "sd": 0.424264
+      },
+      "energy_wh": {
+        "mean": 2.596875,
+        "sd": 0.014531
+      },
+      "cpu_energy_wh": {
+        "mean": 2.250745,
+        "sd": 0.014093
+      },
+      "ram_energy_wh": {
+        "mean": 0.346125,
+        "sd": 0.000445
+      },
+      "co2_g": {
+        "mean": 1.29845,
+        "sd": 0.007283
+      },
+      "cpu_seconds": {
+        "mean": 1149.695,
+        "sd": 4.334565
+      },
+      "inferences": {
+        "mean": 7934,
+        "sd": 0.0
+      },
+      "frames_read": {
+        "mean": 7934,
+        "sd": 0.0
+      },
+      "skipped_by_motion": {
+        "mean": 0,
+        "sd": 0.0
+      },
+      "clahe_activations": {
+        "mean": 0,
+        "sd": 0.0
+      },
+      "inference_ms_median": {
+        "mean": 51.4,
+        "sd": 0.141421
+      },
+      "person_seconds_detected": {
+        "mean": 294,
+        "sd": 4.242641
+      },
+      "presence_recall_vs_baseline": {
+        "mean": 0.9453,
+        "sd": 0.0136
+      },
+      "presence_recall_tolerant_2s": {
+        "mean": 1.0,
+        "sd": 0.0
+      },
+      "clips_with_person_detected": {
+        "mean": 8,
+        "sd": 0.0
+      },
+      "false_firearm_seconds": {
+        "mean": 18.5,
+        "sd": 0.707107
+      },
+      "weapons_model_loaded": true,
+      "first_detection_s_per_clip": {
+        "Walk1.mpg": [
+          4.0,
+          4.0
+        ],
+        "Browse1.mpg": [
+          5.5,
+          7.5
+        ],
+        "Rest_InChair.mpg": [
+          0.7,
+          0.7
+        ],
+        "LeftBag.mpg": [
+          2.4,
+          2.4
+        ],
+        "Browse_WhileWaiting1.mpg": [
+          0.8,
+          0.8
+        ],
+        "WalkByShop1cor.mpg": [
+          1.1,
+          1.1
+        ],
+        "OneLeaveShop1cor.mpg": [
+          0.7,
+          0.7
+        ],
+        "EnterExitCrossingPaths1cor.mpg": [
+          0.9,
+          0.9
+        ]
+      },
+      "energy_wh_change_vs_baseline_pct": 0.0,
+      "cpu_energy_wh_change_vs_baseline_pct": 0.0,
+      "cpu_seconds_change_vs_baseline_pct": 0.0,
+      "co2_g_change_vs_baseline_pct": 0.0
+    },
+    "interval_1s": {
+      "runs": 2,
+      "settings": {
+        "DETECTION_INTERVAL": "1.0",
+        "MOTION_FILTER": "false",
+        "LOW_LIGHT_THRESHOLD": "0"
+      },
+      "duration_s": {
+        "mean": 317.5,
+        "sd": 0.0
+      },
+      "energy_wh": {
+        "mean": 0.43608,
+        "sd": 0.005982
+      },
+      "cpu_energy_wh": {
+        "mean": 0.17438,
+        "sd": 0.006067
+      },
+      "ram_energy_wh": {
+        "mean": 0.2617,
+        "sd": 8.5e-05
+      },
+      "co2_g": {
+        "mean": 0.21805,
+        "sd": 0.003041
+      },
+      "cpu_seconds": {
+        "mean": 89.18,
+        "sd": 3.11127
+      },
+      "inferences": {
+        "mean": 310.5,
+        "sd": 0.707107
+      },
+      "frames_read": {
+        "mean": 7934,
+        "sd": 0.0
+      },
+      "skipped_by_motion": {
+        "mean": 0,
+        "sd": 0.0
+      },
+      "clahe_activations": {
+        "mean": 0,
+        "sd": 0.0
+      },
+      "inference_ms_median": {
+        "mean": 79.8,
+        "sd": 0.707107
+      },
+      "person_seconds_detected": {
+        "mean": 141.5,
+        "sd": 2.12132
+      },
+      "presence_recall_vs_baseline": {
+        "mean": 0.3151,
+        "sd": 0.0045
+      },
+      "presence_recall_tolerant_2s": {
+        "mean": 0.459807,
+        "sd": 0.027284
+      },
+      "clips_with_person_detected": {
+        "mean": 8,
+        "sd": 0.0
+      },
+      "false_firearm_seconds": {
+        "mean": 1.5,
+        "sd": 0.707107
+      },
+      "weapons_model_loaded": true,
+      "first_detection_s_per_clip": {
+        "Walk1.mpg": [
+          3.0,
+          3.0
+        ],
+        "Browse1.mpg": [
+          4.5,
+          1.5
+        ],
+        "Rest_InChair.mpg": [
+          3.7,
+          2.7
+        ],
+        "LeftBag.mpg": [
+          5.4,
+          2.4
+        ],
+        "Browse_WhileWaiting1.mpg": [
+          7.8,
+          18.8
+        ],
+        "WalkByShop1cor.mpg": [
+          0.1,
+          0.1
+        ],
+        "OneLeaveShop1cor.mpg": [
+          0.7,
+          0.7
+        ],
+        "EnterExitCrossingPaths1cor.mpg": [
+          0.9,
+          0.9
+        ]
+      },
+      "energy_wh_change_vs_baseline_pct": -83.2,
+      "cpu_energy_wh_change_vs_baseline_pct": -92.3,
+      "cpu_seconds_change_vs_baseline_pct": -92.2,
+      "co2_g_change_vs_baseline_pct": -83.2
+    },
+    "gating_every_frame": {
+      "runs": 2,
+      "settings": {
+        "DETECTION_INTERVAL": "0",
+        "MOTION_FILTER": "true",
+        "LOW_LIGHT_THRESHOLD": "80"
+      },
+      "duration_s": {
+        "mean": 317.5,
+        "sd": 0.0
+      },
+      "energy_wh": {
+        "mean": 0.4904,
+        "sd": 0.005105
+      },
+      "cpu_energy_wh": {
+        "mean": 0.22858,
+        "sd": 0.004865
+      },
+      "ram_energy_wh": {
+        "mean": 0.261825,
+        "sd": 0.000233
+      },
+      "co2_g": {
+        "mean": 0.2452,
+        "sd": 0.002546
+      },
+      "cpu_seconds": {
+        "mean": 116.805,
+        "sd": 2.481945
+      },
+      "inferences": {
+        "mean": 523,
+        "sd": 0.0
+      },
+      "frames_read": {
+        "mean": 7934,
+        "sd": 0.0
+      },
+      "skipped_by_motion": {
+        "mean": 7411,
+        "sd": 0.0
+      },
+      "clahe_activations": {
+        "mean": 0,
+        "sd": 0.0
+      },
+      "inference_ms_median": {
+        "mean": 69.75,
+        "sd": 2.05061
+      },
+      "person_seconds_detected": {
+        "mean": 80,
+        "sd": 0.0
+      },
+      "presence_recall_vs_baseline": {
+        "mean": 0.1897,
+        "sd": 0.0
+      },
+      "presence_recall_tolerant_2s": {
+        "mean": 0.398714,
+        "sd": 0.0
+      },
+      "clips_with_person_detected": {
+        "mean": 8,
+        "sd": 0.0
+      },
+      "false_firearm_seconds": {
+        "mean": 8,
+        "sd": 0.0
+      },
+      "weapons_model_loaded": true,
+      "first_detection_s_per_clip": {
+        "Walk1.mpg": [
+          3.0,
+          3.0
+        ],
+        "Browse1.mpg": [
+          1.5,
+          1.5
+        ],
+        "Rest_InChair.mpg": [
+          3.7,
+          3.7
+        ],
+        "LeftBag.mpg": [
+          0.4,
+          0.4
+        ],
+        "Browse_WhileWaiting1.mpg": [
+          17.8,
+          17.8
+        ],
+        "WalkByShop1cor.mpg": [
+          0.1,
+          0.1
+        ],
+        "OneLeaveShop1cor.mpg": [
+          3.7,
+          3.7
+        ],
+        "EnterExitCrossingPaths1cor.mpg": [
+          1.9,
+          1.9
+        ]
+      },
+      "energy_wh_change_vs_baseline_pct": -81.1,
+      "cpu_energy_wh_change_vs_baseline_pct": -89.8,
+      "cpu_seconds_change_vs_baseline_pct": -89.8,
+      "co2_g_change_vs_baseline_pct": -81.1
+    },
+    "proposed": {
+      "runs": 2,
+      "settings": {
+        "DETECTION_INTERVAL": "1.0",
+        "MOTION_FILTER": "true",
+        "LOW_LIGHT_THRESHOLD": "80"
+      },
+      "duration_s": {
+        "mean": 317.55,
+        "sd": 0.070711
+      },
+      "energy_wh": {
+        "mean": 0.4002,
+        "sd": 0.004639
+      },
+      "cpu_energy_wh": {
+        "mean": 0.138485,
+        "sd": 0.004518
+      },
+      "ram_energy_wh": {
+        "mean": 0.26172,
+        "sd": 0.000113
+      },
+      "co2_g": {
+        "mean": 0.2001,
+        "sd": 0.002263
+      },
+      "cpu_seconds": {
+        "mean": 70.96,
+        "sd": 2.432447
+      },
+      "inferences": {
+        "mean": 237,
+        "sd": 5.656854
+      },
+      "frames_read": {
+        "mean": 7934,
+        "sd": 0.0
+      },
+      "skipped_by_motion": {
+        "mean": 73,
+        "sd": 4.242641
+      },
+      "clahe_activations": {
+        "mean": 0,
+        "sd": 0.0
+      },
+      "inference_ms_median": {
+        "mean": 78.65,
+        "sd": 2.05061
+      },
+      "person_seconds_detected": {
+        "mean": 133.5,
+        "sd": 3.535534
+      },
+      "presence_recall_vs_baseline": {
+        "mean": 0.299,
+        "sd": 0.0045
+      },
+      "presence_recall_tolerant_2s": {
+        "mean": 0.437299,
+        "sd": 0.013642
+      },
+      "clips_with_person_detected": {
+        "mean": 8,
+        "sd": 0.0
+      },
+      "false_firearm_seconds": {
+        "mean": 0.5,
+        "sd": 0.707107
+      },
+      "weapons_model_loaded": true,
+      "first_detection_s_per_clip": {
+        "Walk1.mpg": [
+          3.0,
+          3.0
+        ],
+        "Browse1.mpg": [
+          4.5,
+          0.5
+        ],
+        "Rest_InChair.mpg": [
+          3.7,
+          3.7
+        ],
+        "LeftBag.mpg": [
+          3.4,
+          0.4
+        ],
+        "Browse_WhileWaiting1.mpg": [
+          21.8,
+          18.8
+        ],
+        "WalkByShop1cor.mpg": [
+          0.1,
+          0.1
+        ],
+        "OneLeaveShop1cor.mpg": [
+          0.7,
+          0.7
+        ],
+        "EnterExitCrossingPaths1cor.mpg": [
+          0.9,
+          0.9
+        ]
+      },
+      "energy_wh_change_vs_baseline_pct": -84.6,
+      "cpu_energy_wh_change_vs_baseline_pct": -93.8,
+      "cpu_seconds_change_vs_baseline_pct": -93.8,
+      "co2_g_change_vs_baseline_pct": -84.6
+    }
+  }
+}
