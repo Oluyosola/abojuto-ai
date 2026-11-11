@@ -28,6 +28,7 @@ ALERT_EMAIL = os.getenv("ALERT_EMAIL", "")
 
 TG_TOKEN    = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TG_CHAT     = os.getenv("TELEGRAM_CHAT_ID", "")
+RETRIES     = 3   # per channel; a brief network drop must not lose a CRITICAL alert
 
 THREAT_EMOJI = {
     "LOW":      "🟢",
@@ -81,14 +82,19 @@ async def _send_email(threat_level, device_id, location, detections, snapshot_pa
         with open(snap, "rb") as f:
             msg.add_attachment(f.read(), maintype="image", subtype="jpeg",
                                filename=snap.name)
-    try:
-        await aiosmtplib.send(
-            msg, hostname=SMTP_HOST, port=SMTP_PORT,
-            start_tls=True, username=SMTP_USER, password=SMTP_PASS,
-        )
-        logger.info(f"Email sent [{threat_level}] → {ALERT_EMAIL}")
-    except Exception as e:
-        logger.error(f"Email failed: {e}")
+    for attempt in range(1, RETRIES + 1):
+        try:
+            await aiosmtplib.send(
+                msg, hostname=SMTP_HOST, port=SMTP_PORT,
+                start_tls=True, username=SMTP_USER, password=SMTP_PASS, timeout=20,
+            )
+            logger.info(f"Email sent [{threat_level}] → {ALERT_EMAIL} (attempt {attempt})")
+            return
+        except Exception as e:
+            logger.warning(f"Email attempt {attempt}/{RETRIES} failed: {type(e).__name__}: {e!r}")
+            if attempt < RETRIES:
+                await asyncio.sleep(2 * attempt)
+    logger.error(f"Email failed [{threat_level}] after {RETRIES} attempts")
 
 
 async def _send_telegram(threat_level, device_id, location, detections, snapshot_path):
@@ -103,21 +109,28 @@ async def _send_telegram(threat_level, device_id, location, detections, snapshot
     )
     url  = f"https://api.telegram.org/bot{TG_TOKEN}/sendPhoto"
     snap = Path(snapshot_path) if snapshot_path else None
-    try:
-        async with httpx.AsyncClient(timeout=10) as client:
-            if snap and snap.exists():
-                with open(snap, "rb") as f:
+    for attempt in range(1, RETRIES + 1):
+        try:
+            async with httpx.AsyncClient(timeout=20) as client:
+                if snap and snap.exists():
                     r = await client.post(url, data={
                         "chat_id": TG_CHAT, "caption": caption, "parse_mode": "Markdown"
-                    }, files={"photo": (snap.name, f, "image/jpeg")})
-            else:
-                r = await client.post(
-                    f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage",
-                    json={"chat_id": TG_CHAT, "text": caption, "parse_mode": "Markdown"},
-                )
-        if r.status_code != 200:
-            logger.error(f"Telegram rejected [{threat_level}]: {r.status_code} {r.text[:200]}")
-            return
-        logger.info(f"Telegram sent [{threat_level}]")
-    except Exception as e:
-        logger.error(f"Telegram failed: {e}")
+                    }, files={"photo": (snap.name, snap.read_bytes(), "image/jpeg")})
+                else:
+                    r = await client.post(
+                        f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage",
+                        json={"chat_id": TG_CHAT, "text": caption, "parse_mode": "Markdown"},
+                    )
+            if r.status_code == 200:
+                logger.info(f"Telegram sent [{threat_level}] (attempt {attempt})")
+                return
+            if r.status_code < 500 and r.status_code != 429:
+                # Bad request or bad credentials: retrying will not help
+                logger.error(f"Telegram rejected [{threat_level}]: {r.status_code} {r.text[:200]}")
+                return
+            logger.warning(f"Telegram attempt {attempt}/{RETRIES}: HTTP {r.status_code}")
+        except Exception as e:
+            logger.warning(f"Telegram attempt {attempt}/{RETRIES} failed: {type(e).__name__}: {e!r}")
+        if attempt < RETRIES:
+            await asyncio.sleep(2 * attempt)
+    logger.error(f"Telegram failed [{threat_level}] after {RETRIES} attempts")

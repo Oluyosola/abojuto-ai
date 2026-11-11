@@ -157,10 +157,10 @@
           null
         ]
       },
-      "energy_wh_change_vs_baseline_pct": -87.9,
+      "energy_wh_change_vs_baseline_pct": -88.1,
       "cpu_energy_wh_change_vs_baseline_pct": -97.7,
-      "cpu_seconds_change_vs_baseline_pct": -97.6,
-      "co2_g_change_vs_baseline_pct": -87.9
+      "cpu_seconds_change_vs_baseline_pct": -97.7,
+      "co2_g_change_vs_baseline_pct": -88.1
     },
     "baseline": {
       "runs": 2,
@@ -170,28 +170,28 @@
         "LOW_LIGHT_THRESHOLD": "0"
       },
       "duration_s": {
-        "mean": 418.6,
-        "sd": 0.424264
+        "mean": 433.75,
+        "sd": 0.353553
       },
       "energy_wh": {
-        "mean": 2.596875,
-        "sd": 0.014531
+        "mean": 2.646615,
+        "sd": 0.022493
       },
       "cpu_energy_wh": {
-        "mean": 2.250745,
-        "sd": 0.014093
+        "mean": 2.287025,
+        "sd": 0.022366
       },
       "ram_energy_wh": {
-        "mean": 0.346125,
-        "sd": 0.000445
+        "mean": 0.35959,
+        "sd": 0.000127
       },
       "co2_g": {
-        "mean": 1.29845,
-        "sd": 0.007283
+        "mean": 1.32335,
+        "sd": 0.011243
       },
       "cpu_seconds": {
-        "mean": 1149.695,
-        "sd": 4.334565
+        "mean": 1165.93,
+        "sd": 11.92182
       },
       "inferences": {
         "mean": 7934,
@@ -210,16 +210,16 @@
         "sd": 0.0
       },
       "inference_ms_median": {
-        "mean": 51.4,
-        "sd": 0.141421
+        "mean": 53.15,
+        "sd": 0.212132
       },
       "person_seconds_detected": {
-        "mean": 294,
-        "sd": 4.242641
+        "mean": 234,
+        "sd": 0.0
       },
       "presence_recall_vs_baseline": {
-        "mean": 0.9453,
-        "sd": 0.0136
+        "mean": 1.0,
+        "sd": 0.0
       },
       "presence_recall_tolerant_2s": {
         "mean": 1.0,
@@ -230,34 +230,34 @@
         "sd": 0.0
       },
       "false_firearm_seconds": {
-        "mean": 18.5,
-        "sd": 0.707107
+        "mean": 9,
+        "sd": 0.0
       },
       "weapons_model_loaded": true,
       "first_detection_s_per_clip": {
         "Walk1.mpg": [
-          4.0,
-          4.0
+          2.0,
+          2.0
         ],
         "Browse1.mpg": [
-          5.5,
-          7.5
+          0.5,
+          0.5
         ],
         "Rest_InChair.mpg": [
           0.7,
           0.7
         ],
         "LeftBag.mpg": [
-          2.4,
-          2.4
+          0.4,
+          0.4
         ],
         "Browse_WhileWaiting1.mpg": [
-          0.8,
-          0.8
+          1.8,
+          1.8
         ],
         "WalkByShop1cor.mpg": [
-          1.1,
-          1.1
+          0.1,
+          0.1
         ],
         "OneLeaveShop1cor.mpg": [
           0.7,
@@ -329,12 +329,12 @@
         "sd": 2.12132
       },
       "presence_recall_vs_baseline": {
-        "mean": 0.3151,
-        "sd": 0.0045
+        "mean": 0.6026,
+        "sd": 0.0121
       },
       "presence_recall_tolerant_2s": {
-        "mean": 0.459807,
-        "sd": 0.027284
+        "mean": 0.801282,
+        "sd": 0.021153
       },
       "clips_with_person_detected": {
         "mean": 8,
@@ -379,10 +379,10 @@
           0.9
         ]
       },
-      "energy_wh_change_vs_baseline_pct": -83.2,
-      "cpu_energy_wh_change_vs_baseline_pct": -92.3,
-      "cpu_seconds_change_vs_baseline_pct": -92.2,
-      "co2_g_change_vs_baseline_pct": -83.2
+      "energy_wh_change_vs_baseline_pct": -83.5,
+      "cpu_energy_wh_change_vs_baseline_pct": -92.4,
+      "cpu_seconds_change_vs_baseline_pct": -92.4,
+      "co2_g_change_vs_baseline_pct": -83.5
     },
     "gating_every_frame": {
       "runs": 2,
@@ -440,11 +440,11 @@
         "sd": 0.0
       },
       "presence_recall_vs_baseline": {
-        "mean": 0.1897,
+        "mean": 0.3376,
         "sd": 0.0
       },
       "presence_recall_tolerant_2s": {
-        "mean": 0.398714,
+        "mean": 0.628205,
         "sd": 0.0
       },
       "clips_with_person_detected": {
@@ -490,10 +490,10 @@
           1.9
         ]
       },
-      "energy_wh_change_vs_baseline_pct": -81.1,
-      "cpu_energy_wh_change_vs_baseline_pct": -89.8,
-      "cpu_seconds_change_vs_baseline_pct": -89.8,
-      "co2_g_change_vs_baseline_pct": -81.1
+      "energy_wh_change_vs_baseline_pct": -81.5,
+      "cpu_energy_wh_change_vs_baseline_pct": -90.0,
+      "cpu_seconds_change_vs_baseline_pct": -90.0,
+      "co2_g_change_vs_baseline_pct": -81.5
     },
     "proposed": {
       "runs": 2,
@@ -551,12 +551,12 @@
         "sd": 3.535534
       },
       "presence_recall_vs_baseline": {
-        "mean": 0.299,
-        "sd": 0.0045
+        "mean": 0.5705,
+        "sd": 0.0151
       },
       "presence_recall_tolerant_2s": {
-        "mean": 0.437299,
-        "sd": 0.013642
+        "mean": 0.769231,
+        "sd": 0.042306
       },
       "clips_with_person_detected": {
         "mean": 8,
@@ -601,10 +601,11 @@
           0.9
         ]
       },
-      "energy_wh_change_vs_baseline_pct": -84.6,
-      "cpu_energy_wh_change_vs_baseline_pct": -93.8,
-      "cpu_seconds_change_vs_baseline_pct": -93.8,
-      "co2_g_change_vs_baseline_pct": -84.6
+      "energy_wh_change_vs_baseline_pct": -84.9,
+      "cpu_energy_wh_change_vs_baseline_pct": -93.9,
+      "cpu_seconds_change_vs_baseline_pct": -93.9,
+      "co2_g_change_vs_baseline_pct": -84.9
     }
-  }
+  },
+  "note": "baseline re-run with frame-based detection timing; energy of baseline from these runs"
 }
